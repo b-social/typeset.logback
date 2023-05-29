@@ -6,4 +6,5 @@
             :distribution :repo}
   :pedantic? true
   :dependencies [[org.clojure/clojure "1.11.1" :scope "provided"]
-                 [ch.qos.logback/logback-classic "1.4.7"]])
+                 [ch.qos.logback/logback-classic "1.4.7"]
+                 [metosin/jsonista "0.3.7"]])
