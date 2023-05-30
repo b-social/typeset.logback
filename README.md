@@ -1,6 +1,6 @@
 # Typeset.logback
 
-Simple JSON layout and formatter components for [Logback][] Classic; with [SLF4J][] 2+ key value attribute support.
+Simple JSON layout component for [Logback][] Classic, with Clojure and [SLF4J][] 2+ key value attribute support.
 
 [Logback]: https://logback.qos.ch/
 [SLF4J]: https://www.slf4j.org/
