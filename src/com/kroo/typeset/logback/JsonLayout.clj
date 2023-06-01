@@ -4,14 +4,14 @@
   (:require [jsonista.core :as j])
   (:import (java.util List Map HashMap)
            (clojure.lang IPersistentList)
-           (ch.qos.logback.core LayoutBase CoreConstants)
+           (ch.qos.logback.core CoreConstants)
            (ch.qos.logback.classic.spi ILoggingEvent)
            (ch.qos.logback.classic.pattern ThrowableProxyConverter)
            (org.slf4j Marker)
            (org.slf4j.event KeyValuePair)
            (com.fasterxml.jackson.databind ObjectMapper))
   (:gen-class
-   :extends LayoutBase
+   :extends ch.qos.logback.core.LayoutBase
    :init    init
    :state   state
    :methods [[setPrettyPrint [Boolean] void]
