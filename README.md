@@ -9,6 +9,13 @@ Simple JSON layout component for [Logback][] Classic, with Clojure and [SLF4J][]
 ## Installation
 
 > **Note**<br>
+> While this library is designed for and written in Clojure, it still works in
+> other JVM languages.  To use it, include [`org.clojure/clojure`][clj:mvn] as
+> a dependency and add [Clojars](https://clojars.org/) as a Maven repository.
+
+[clj:mvn]: https://central.sonatype.com/artifact/org.clojure/clojure/1.11.1/overview
+
+> **Note**<br>
 > Not yet published to Clojars!
 
 ```clojure

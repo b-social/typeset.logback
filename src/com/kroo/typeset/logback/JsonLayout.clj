@@ -51,7 +51,7 @@
                          :include-mdc       false
                          :include-markers   true
                          :include-exception true
-                         :format-ex-as-str  false
+                         :format-ex-as-str  true
                          :include-level-val false
                          :ex-converter      (ThrowableProxyConverter.)})]
               (assoc opts :object-mapper (j/object-mapper opts))))])
@@ -126,7 +126,7 @@
 ;;; Expose Logback configuration options.
 
 (defmacro ^:private set-opt! [this opt]
-  `(swap! (.state ~this) update ~(keyword opt) ~opt))
+  `(swap! (.state ~this) assoc ~(keyword opt) ~opt))
 
 (defn- update-opt+mapper
   ^JsonLayoutOpts [opts k v]
