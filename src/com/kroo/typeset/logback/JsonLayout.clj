@@ -59,12 +59,13 @@
 (defn- insert!
   "Inserts a key value pair into a Java map.  If a key with the same name
   already exists, prepends an \"@\" onto the key."
-  ^Map [^Map m ^IPersistentList kv]
-  (let [^String k (first kv)
-        ^Object v (second kv)]
-    (if (.putIfAbsent m k v)
-      (recur m (list (str \@ k) v))
-      m)))
+  (^Map [^Map m] m)
+  (^Map [^Map m ^IPersistentList kv]
+   (let [^String k (first kv)
+         ^Object v (second kv)]
+     (if (.putIfAbsent m k v)
+       (recur m (list (str \@ k) v))
+       m))))
 
 (defmacro ^:private ->HashMap
   "Less verbose HashMap builder."
