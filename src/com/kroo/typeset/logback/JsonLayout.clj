@@ -30,15 +30,15 @@
 
 ;; Record providing fast access to JsonLayout options in lieu of fields.
 (defrecord JsonLayoutOpts
-  [^Boolean append-newline
-   ^Boolean include-context
-   ^Boolean include-mdc
-   ^Boolean include-markers
-   ^Boolean include-exception
-   ^Boolean exception-as-str
-   ^Boolean include-level-val
-   ^ObjectMapper object-mapper
-   ^ThrowableProxyConverter ex-converter])
+  [append-newline
+   include-context
+   include-mdc
+   include-markers
+   include-exception
+   exception-as-str
+   include-level-val
+   object-mapper
+   ex-converter])
 
 (defn -init []
   [[] (atom (let [opts (map->JsonLayoutOpts
@@ -80,7 +80,7 @@
 
 (def ^:private KeyValuePair->pair
   "Transducer converting `KeyValuePair` into a list."
-  (map (fn [^KeyValuePair kv]
+  (map (fn ^IPersistentList [^KeyValuePair kv]
          (list (.key kv) (.value kv)))))
 
 (defn -doLayout
