@@ -1,10 +1,15 @@
 (ns com.kroo.typeset.logback.JsonLayout
+  "Simple JSON layout component for Logback Classic, with Clojure and SLF4J 2+
+  key value attribute support."
   (:require [jsonista.core :as j])
-  (:import (ch.qos.logback.core LayoutBase)
+  (:import (java.util List Map HashMap)
+           (clojure.lang IPersistentList)
+           (ch.qos.logback.core LayoutBase CoreConstants)
            (ch.qos.logback.classic.spi ILoggingEvent)
            (ch.qos.logback.classic.pattern ThrowableProxyConverter)
            (org.slf4j Marker)
-           (org.slf4j.event KeyValuePair))
+           (org.slf4j.event KeyValuePair)
+           (com.fasterxml.jackson.databind ObjectMapper))
   (:gen-class
    :extends LayoutBase
    :init    init
@@ -21,66 +26,96 @@
              [setFormatExceptionAsString [Boolean] void]
              [setIncludeLevelValue [Boolean] void]]))
 
-;; TODO: handle name collisions by stacking @s.
-;;  - putIfAbsent
-;; TODO: use java.util.Map for performance?
-;; TODO: format exception structurally instead of a string.
-;; TODO: append newline + option to turn that off
+(set! *warn-on-reflection* true)
 
-;; Record providing fast access to JsonLayout options.
+;; Record providing fast access to JsonLayout options in lieu of fields.
 (defrecord JsonLayoutOpts
-  [append-newline
-   include-context
-   include-mdc
-   include-markers
-   include-exception
-   exception-as-str
-   include-level-val
-   object-mapper])
-
-(def ^:private ^:const default-opts
-  (map->JsonLayoutOpts
-   {:pretty            false
-    :strip-nils        true
-    :date-format       "yyyy-MM-dd'T'HH:mm:ss'Z'"
-    :escape-non-ascii  false
-    :append-newline    true
-    :include-context   false
-    :include-mdc       false
-    :include-markers   true
-    :include-exception true
-    :format-ex-as-str  false
-    :include-level-val false}))
+  [^Boolean append-newline
+   ^Boolean include-context
+   ^Boolean include-mdc
+   ^Boolean include-markers
+   ^Boolean include-exception
+   ^Boolean exception-as-str
+   ^Boolean include-level-val
+   ^ObjectMapper object-mapper
+   ^ThrowableProxyConverter ex-converter])
 
 (defn -init []
-  [[] (atom (assoc default-opts
-                   :ex-converter  (ThrowableProxyConverter.)
-                   :object-mapper (j/object-mapper default-opts)))])
+  [[] (atom (let [opts (map->JsonLayoutOpts
+                        {:pretty            false
+                         :strip-nils        true
+                         :date-format       "yyyy-MM-dd'T'HH:mm:ss'Z'"
+                         :escape-non-ascii  false
+                         :append-newline    true
+                         :include-context   false
+                         :include-mdc       false
+                         :include-markers   true
+                         :include-exception true
+                         :format-ex-as-str  false
+                         :include-level-val false
+                         :ex-converter      (ThrowableProxyConverter.)})]
+              (assoc opts :object-mapper (j/object-mapper opts))))])
 
-(defn -doLayout ^String [this ^ILoggingEvent event]
-  (let [^JsonLayoutOpts opts @(.state this)]
-    (j/write-value-as-string
-     (into
-      {:timestamp (.getInstant event)
-       :level     (.toString (.getLevel event))
-       :logger    (.getLoggerName event)
-       :thread    (.getThreadName event)
-       :context   (.getName (.getLoggerContextVO event))
-       :message   (.getFormattedMessage event)
-       :mdc       (let [^java.util.Map mdc (.getMDCPropertyMap event)]
-                    (when-not (.isEmpty mdc) mdc))
-       :markers   (let [^java.util.List markers (.getMarkerList event)]
-                    (when-not (.isEmpty markers)
-                      (mapv #(.getName ^Marker %) markers)))
-       :exception (when (.getThrowableProxy event)
-                    (when-let [^String throwable
-                               (-> this .state :ex-conv (.convert event))]
-                      (when-not (.isEmpty throwable)
-                        throwable)))}
-      (map (fn [^KeyValuePair kv]
-             [(.key kv) (.value kv)]))
-      (.getKeyValuePairs event))
-     (:object-mapper opts))))
+(defn- insert!
+  "Inserts a key value pair into a Java map.  If a key with the same name
+  already exists, prepends an \"@\" onto the key."
+  ^Map [^Map m ^IPersistentList kv]
+  (let [^String k (first kv)
+        ^Object v (second kv)]
+    (if (.putIfAbsent m k v)
+      (recur m (list (str \@ k) v))
+      m)))
+
+(defmacro ^:private ->HashMap
+  "Less verbose HashMap builder."
+  [& kvs]
+  `(doto (HashMap.)
+     ~@(transduce
+         (comp
+           (partition-all 2)
+           (map (fn [x] `(.put ~@x))))
+         conj
+         ()
+         kvs)))
+
+(def ^:private KeyValuePair->pair
+  "Transducer converting `KeyValuePair` into a list."
+  (map (fn [^KeyValuePair kv]
+         (list (.key kv) (.value kv)))))
+
+(defn -doLayout
+  ^String [this ^ILoggingEvent event]
+  (let [^JsonLayoutOpts opts @(.state this)
+        ^Map m (->HashMap "timestamp" (.getInstant event)
+                          "level"     (.toString (.getLevel event))
+                          "logger"    (.getLoggerName event)
+                          "thread"    (.getThreadName event)
+                          "message"   (.getFormattedMessage event))]
+    (when (:include-context opts)
+      (.put m "context" (.getName (.getLoggerContextVO event))))
+    (when (:include-mdc opts)
+      (let [^Map mdc (.getMDCPropertyMap event)]
+        (when-not (.isEmpty mdc)
+          (.put m "mdc" mdc))))
+    (when (:include-markers opts)
+      (let [^List markers (.getMarkerList event)]
+        (when-not (.isEmpty markers)
+          (mapv #(.getName ^Marker m) markers))))
+    (when (and (:include-exception opts)
+               (.getThrowableProxy event))
+      (when-let [^String throwable
+                 (.convert ^ThrowableProxyConverter (:ex-converter opts) event)]
+        (when-not (.isEmpty throwable)
+          throwable)))
+    (let [s (j/write-value-as-string
+              (transduce KeyValuePair->pair
+                         insert!
+                         m
+                         (.getKeyValuePairs event))
+              (:object-mapper opts))]
+      (if (:append-newline opts)
+        (str s CoreConstants/LINE_SEPARATOR)
+        s))))
 
 (defn -getContentType ^String [this]
   "application/json")
@@ -128,8 +163,9 @@
 (defn -setIncludeException [this include-exception]
   (set-opt! this include-exception))
 
-(defn -setFormatExceptionAsString [this format-ex-as-str]
-  (set-opt! this format-ex-as-str))
+;; TODO: format exeption structurally instead of a string.
+;; (defn -setFormatExceptionAsString [this format-ex-as-str]
+;;   (set-opt! this format-ex-as-str))
 
 (defn -setIncludeLevelValue [this include-level-val]
   (set-opt! this include-level-val))
