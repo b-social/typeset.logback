@@ -58,12 +58,10 @@ Use Typeset.logback and configure the various options:
                 <escapeNonAsciiCharacters>false</escapeNonAsciiCharacters>
                 <appendLineSeparator>true</appendLineSeparator>
                 <includeContext>false</includeContext>
+                <includeLevelValue>false</includeLevelValue>
                 <includeMdc>false</includeMdc>
                 <includeMarkers>true</includeMarkers>
-                <includeLevelValue>false</includeLevelValue>
                 <includeException>true</includeException>
-                <!-- This option has not yet been added. -->
-                <!-- <formatExceptionAsString>false</formatExceptionAsString> -->
             </layout>
         </encoder>
     </appender>

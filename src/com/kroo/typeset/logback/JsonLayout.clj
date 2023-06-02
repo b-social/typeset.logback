@@ -20,11 +20,13 @@
              [setEscapeNonAsciiCharacters [Boolean] void]
              [setAppendLineSeparator [Boolean] void]
              [setIncludeContext [Boolean] void]
+             [setIncludeLevelValue [Boolean] void]
              [setIncludeMdc [Boolean] void]
              [setIncludeMarkers [Boolean] void]
              [setIncludeException [Boolean] void]
-             [setFormatExceptionAsString [Boolean] void]
-             [setIncludeLevelValue [Boolean] void]]))
+             [setFormatExceptionAsString [Boolean] void]]))
+
+;; TODO: option to register additional ObjectMapper modules.
 
 (set! *warn-on-reflection* true)
 
@@ -32,11 +34,11 @@
 (defrecord JsonLayoutOpts
   [append-newline
    include-context
+   include-level-val
    include-mdc
    include-markers
    include-exception
    exception-as-str
-   include-level-val
    object-mapper
    ex-converter])
 
@@ -48,11 +50,11 @@
                          :escape-non-ascii  false
                          :append-newline    true
                          :include-context   false
+                         :include-level-val false
                          :include-mdc       false
                          :include-markers   true
                          :include-exception true
                          :format-ex-as-str  true
-                         :include-level-val false
                          :ex-converter      (ThrowableProxyConverter.)})]
               (assoc opts :object-mapper (j/object-mapper opts))))])
 
@@ -71,13 +73,10 @@
   "Less verbose HashMap builder."
   [& kvs]
   `(doto (HashMap.)
-     ~@(transduce
-         (comp
-           (partition-all 2)
-           (map (fn [x] `(.put ~@x))))
-         conj
-         ()
-         kvs)))
+     ~@(into ()
+             (comp (partition-all 2)
+                   (map (fn [x] `(.put ~@x))))
+             kvs)))
 
 (def ^:private KeyValuePair->pair
   "Transducer converting `KeyValuePair` into a list."
@@ -94,6 +93,8 @@
                           "message"   (.getFormattedMessage event))]
     (when (:include-context opts)
       (.put m "context" (.getName (.getLoggerContextVO event))))
+    (when (:include-level-val opts)
+      (.put m "level_value" (.toInt (.getLevel event))))
     (when (:include-mdc opts)
       (let [^Map mdc (.getMDCPropertyMap event)]
         (when-not (.isEmpty mdc)
@@ -155,6 +156,9 @@
 (defn -setIncludeContext [this include-context]
   (set-opt! this include-context))
 
+(defn -setIncludeLevelValue [this include-level-val]
+  (set-opt! this include-level-val))
+
 (defn -setIncludeMdc [this include-mdc]
   (set-opt! this include-mdc))
 
@@ -167,6 +171,3 @@
 ;; TODO: format exeption structurally instead of a string.
 ;; (defn -setFormatExceptionAsString [this format-ex-as-str]
 ;;   (set-opt! this format-ex-as-str))
-
-(defn -setIncludeLevelValue [this include-level-val]
-  (set-opt! this include-level-val))
