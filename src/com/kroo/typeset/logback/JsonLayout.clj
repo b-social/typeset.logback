@@ -3,7 +3,6 @@
   key value attribute support."
   (:require [jsonista.core :as j])
   (:import (java.util List Map HashMap)
-           (clojure.lang IPersistentList)
            (ch.qos.logback.core CoreConstants)
            (ch.qos.logback.classic.spi ILoggingEvent)
            (ch.qos.logback.classic.pattern ThrowableProxyConverter)
@@ -27,6 +26,7 @@
              [setFormatExceptionAsString [Boolean] void]]))
 
 ;; TODO: option to register additional ObjectMapper modules.
+;; TODO: camel snake kebab style key formatting options.
 
 (set! *warn-on-reflection* true)
 
@@ -61,13 +61,12 @@
 (defn- insert!
   "Inserts a key value pair into a Java map.  If a key with the same name
   already exists, prepends an \"@\" onto the key."
-  (^Map [^Map m] m)
-  (^Map [^Map m ^IPersistentList kv]
-   (let [^String k (first kv)
-         ^Object v (second kv)]
-     (if (.putIfAbsent m k v)
-       (recur m (list (str \@ k) v))
-       m))))
+  ^Map [^Map m ^KeyValuePair kv]
+  (loop [^String k (.key kv)
+         ^Object v (.value kv)]
+    (if (.putIfAbsent m k v)
+      (recur (str \@ k) v)
+      m)))
 
 (defmacro ^:private ->HashMap
   "Less verbose HashMap builder."
@@ -77,11 +76,6 @@
              (comp (partition-all 2)
                    (map (fn [x] `(.put ~@x))))
              kvs)))
-
-(def ^:private KeyValuePair->pair
-  "Transducer converting `KeyValuePair` into a list."
-  (map (fn ^IPersistentList [^KeyValuePair kv]
-         (list (.key kv) (.value kv)))))
 
 (defn -doLayout
   ^String [this ^ILoggingEvent event]
@@ -110,10 +104,7 @@
         (when-not (.isEmpty throwable)
           throwable)))
     (let [s (j/write-value-as-string
-              (transduce KeyValuePair->pair
-                         insert!
-                         m
-                         (.getKeyValuePairs event))
+              (reduce insert! m (.getKeyValuePairs event))
               (:object-mapper opts))]
       (if (:append-newline opts)
         (str s CoreConstants/LINE_SEPARATOR)
