@@ -1,6 +1,6 @@
 (ns com.kroo.typeset.logback.JsonLayout
   "Simple JSON layout component for Logback Classic, with Clojure and SLF4J 2+
-  key value attribute support."
+   key value attribute support."
   (:require [jsonista.core :as j])
   (:import (java.util List Map HashMap)
            (ch.qos.logback.core CoreConstants)
@@ -40,7 +40,10 @@
    object-mapper
    ex-converter])
 
-(defn -init []
+(defn -init
+  "Method invoked during object initialisation.  Sets the default value for the
+  \"state\" field."
+  []
   [[] (atom (let [opts (map->JsonLayoutOpts
                         {:pretty             false
                          :strip-nils         true
@@ -58,7 +61,7 @@
 
 (defn- insert!
   "Inserts a key value pair into a Java map.  If a key with the same name
-  already exists, prepends an \"@\" onto the key."
+   already exists, prepends an \"@\" onto the key."
   ^Map [^Map m ^KeyValuePair kv]
   (loop [^String k (.key kv)
          ^Object v (.value kv)]
@@ -76,6 +79,8 @@
              kvs)))
 
 (defn -doLayout
+  "The core method on a Logback layout component.  This method takes a logging
+   event and returns that log formatted as a JSON string."
   ^String [this ^ILoggingEvent event]
   (let [^JsonLayoutOpts opts @(.state this)
         ^Map m (->HashMap "timestamp" (.getInstant event)
@@ -131,6 +136,7 @@
   `(swap! (.state ~this) assoc ~(keyword opt) ~opt))
 
 (defn- update-opt+mapper
+  "Update an option in the option map and builds a new Jackson ObjectMapper."
   ^JsonLayoutOpts [opts k v]
   (let [opts (assoc opts k v)]
     (assoc opts :object-mapper (j/object-mapper opts))))
