@@ -1,0 +1,21 @@
+{
+  "@timestamp" : {
+    "foo" : {
+      "bar" : 12.4
+    }
+  },
+  "level" : "WARN",
+  "level_value" : 30000,
+  "logger" : "my.logger",
+  "things" : [ 1, {
+    "hi" : {
+      "there" : 2
+    }
+  }, 3, 4 ],
+  "thread" : "my.thread",
+  "message" : "my formatted message",
+  "mdc" : {
+    "hello" : "world"
+  },
+  "timestamp" : "2023-06-05T22:45:00Z"
+}
