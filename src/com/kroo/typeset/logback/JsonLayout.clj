@@ -26,9 +26,6 @@
              [setIncludeMarkers [Boolean] void]
              [setIncludeException [Boolean] void]]))
 
-;; TODO: option to register additional ObjectMapper modules.
-;; TODO: option to format exceptions as data.
-
 ;; Record providing fast access to JsonLayout options in lieu of fields.
 (defrecord JsonLayoutOpts
   [append-newline
