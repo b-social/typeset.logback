@@ -23,10 +23,10 @@
              [setIncludeLevelValue [Boolean] void]
              [setIncludeMdc [Boolean] void]
              [setIncludeMarkers [Boolean] void]
-             [setIncludeException [Boolean] void]
-             [setFormatExceptionAsString [Boolean] void]]))
+             [setIncludeException [Boolean] void]]))
 
 ;; TODO: option to register additional ObjectMapper modules.
+;; TODO: option to format exceptions as data (+ extract ex-data).
 
 (set! *warn-on-reflection* true)
 
@@ -54,7 +54,6 @@
                          :include-mdc        false
                          :include-markers    true
                          :include-exception  true
-                         :format-ex-as-str   true
                          :ex-converter       (ThrowableProxyConverter.)})]
               (assoc opts :object-mapper (j/object-mapper opts))))])
 
@@ -97,8 +96,8 @@
       (let [^List markers (.getMarkerList event)]
         (when-not (.isEmpty markers)
           (.put m "markers" (mapv #(.getName ^Marker %) markers)))))
-    (when (and (:include-exception opts)
-               (.getThrowableProxy event))
+    (when (and (.getThrowableProxy event)
+               (:include-exception opts))
       (when-let [^String throwable
                  (.convert ^ThrowableProxyConverter (:ex-converter opts) event)]
         (when-not (.isEmpty throwable)
@@ -158,8 +157,3 @@
 
 (defn -setIncludeException [this include-exception]
   (set-opt! this include-exception))
-
-;; TODO: format exeption structurally instead of a string.
-;; TODO: rename this option.
-;; (defn -setFormatExceptionAsString [this format-ex-as-str]
-;;   (set-opt! this format-ex-as-str))

@@ -76,22 +76,22 @@ Example log output (with pretty printing enabled):
 {
   "timestamp" : "2023-06-02T14:43:55.685557Z",
   "level" : "WARN",
-  "level_value" : 30000,  // <includeLevelValue>true</includeLevelValue>
+  "level_value" : 30000,         // <includeLevelValue>true</includeLevelValue>
   "logger" : "my.logger",
   "logger_context" : "default",  // <includeLoggerContext>true</includeLoggerContext>
   "thread" : "my.thread",
   "message" : "My formatted message",
-  "markers" : [ "my-marker" ]
-  "mdc" : {
+  "markers" : [ "my-marker" ],
+  "mdc" : {                      // <includeMdc>true</includeMdc>
     "some-id" : "24676689-cffa-461b-964e-d3fedafe31b5"
   },
+  // SLF4J key value pairs.
   "things" : [ 1, {
     "hi" : {
       "there" : 2
     }
   }, 3, 4 ],
-  // Duplicate keys get "@" prepended to them.
-  "@timestamp" : {
+  "@timestamp" : {               // Duplicate keys get "@" prepended to them.
     "foo" : {
       "bar" : 12.4
     }
