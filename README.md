@@ -57,7 +57,7 @@ Use Typeset.logback and configure the various options:
                 <timestampFormat>yyyy-MM-dd'T'HH:mm:ss.SSS'Z'</timestampFormat>
                 <escapeNonAsciiCharacters>false</escapeNonAsciiCharacters>
                 <appendLineSeparator>true</appendLineSeparator>
-                <includeContext>false</includeContext>
+                <includeLoggerContext>false</includeLoggerContext>
                 <includeLevelValue>false</includeLevelValue>
                 <includeMdc>false</includeMdc>
                 <includeMarkers>true</includeMarkers>
@@ -68,6 +68,35 @@ Use Typeset.logback and configure the various options:
 
     <logger name="TEMP" level="DEBUG"/>
 </configuration>
+```
+
+Example log output (with pretty printing enabled):
+
+```jsonc
+{
+  "timestamp" : "2023-06-02T14:43:55.685557Z",
+  "level" : "WARN",
+  "level_value" : 30000,  // <includeLevelValue>true</includeLevelValue>
+  "logger" : "my.logger",
+  "logger_context" : "default",  // <includeLoggerContext>true</includeLoggerContext>
+  "thread" : "my.thread",
+  "message" : "My formatted message",
+  "markers" : [ "my-marker" ]
+  "mdc" : {
+    "some-id" : "24676689-cffa-461b-964e-d3fedafe31b5"
+  },
+  "things" : [ 1, {
+    "hi" : {
+      "there" : 2
+    }
+  }, 3, 4 ],
+  // Duplicate keys get "@" prepended to them.
+  "@timestamp" : {
+    "foo" : {
+      "bar" : 12.4
+    }
+  },
+}
 ```
 
 

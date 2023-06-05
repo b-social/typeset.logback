@@ -11,6 +11,7 @@
            (com.fasterxml.jackson.databind ObjectMapper))
   (:gen-class
    :extends ch.qos.logback.core.LayoutBase
+   :main    false
    :init    init
    :state   state
    :methods [[setPrettyPrint [Boolean] void]
@@ -18,7 +19,7 @@
              [setTimestampFormat [String] void]
              [setEscapeNonAsciiCharacters [Boolean] void]
              [setAppendLineSeparator [Boolean] void]
-             [setIncludeContext [Boolean] void]
+             [setIncludeLoggerContext [Boolean] void]
              [setIncludeLevelValue [Boolean] void]
              [setIncludeMdc [Boolean] void]
              [setIncludeMarkers [Boolean] void]
@@ -26,14 +27,13 @@
              [setFormatExceptionAsString [Boolean] void]]))
 
 ;; TODO: option to register additional ObjectMapper modules.
-;; TODO: camel snake kebab style key formatting options.
 
 (set! *warn-on-reflection* true)
 
 ;; Record providing fast access to JsonLayout options in lieu of fields.
 (defrecord JsonLayoutOpts
   [append-newline
-   include-context
+   include-logger-ctx
    include-level-val
    include-mdc
    include-markers
@@ -44,18 +44,18 @@
 
 (defn -init []
   [[] (atom (let [opts (map->JsonLayoutOpts
-                        {:pretty            false
-                         :strip-nils        true
-                         :date-format       "yyyy-MM-dd'T'HH:mm:ss'Z'"
-                         :escape-non-ascii  false
-                         :append-newline    true
-                         :include-context   false
-                         :include-level-val false
-                         :include-mdc       false
-                         :include-markers   true
-                         :include-exception true
-                         :format-ex-as-str  true
-                         :ex-converter      (ThrowableProxyConverter.)})]
+                        {:pretty             false
+                         :strip-nils         true
+                         :date-format        "yyyy-MM-dd'T'HH:mm:ss'Z'"
+                         :escape-non-ascii   false
+                         :append-newline     true
+                         :include-logger-ctx false
+                         :include-level-val  false
+                         :include-mdc        false
+                         :include-markers    true
+                         :include-exception  true
+                         :format-ex-as-str   true
+                         :ex-converter       (ThrowableProxyConverter.)})]
               (assoc opts :object-mapper (j/object-mapper opts))))])
 
 (defn- insert!
@@ -85,8 +85,8 @@
                           "logger"    (.getLoggerName event)
                           "thread"    (.getThreadName event)
                           "message"   (.getFormattedMessage event))]
-    (when (:include-context opts)
-      (.put m "context" (.getName (.getLoggerContextVO event))))
+    (when (:include-logger-ctx opts)
+      (.put m "logger_context" (.getName (.getLoggerContextVO event))))
     (when (:include-level-val opts)
       (.put m "level_value" (.toInt (.getLevel event))))
     (when (:include-mdc opts)
@@ -96,7 +96,7 @@
     (when (:include-markers opts)
       (let [^List markers (.getMarkerList event)]
         (when-not (.isEmpty markers)
-          (mapv #(.getName ^Marker m) markers))))
+          (.put m "markers" (mapv #(.getName ^Marker %) markers)))))
     (when (and (:include-exception opts)
                (.getThrowableProxy event))
       (when-let [^String throwable
@@ -144,8 +144,8 @@
 (defn -setAppendLineSeparator [this append-newline]
   (set-opt! this append-newline))
 
-(defn -setIncludeContext [this include-context]
-  (set-opt! this include-context))
+(defn -setIncludeLoggerContext [this include-logger-ctx]
+  (set-opt! this include-logger-ctx))
 
 (defn -setIncludeLevelValue [this include-level-val]
   (set-opt! this include-level-val))
@@ -160,5 +160,6 @@
   (set-opt! this include-exception))
 
 ;; TODO: format exeption structurally instead of a string.
+;; TODO: rename this option.
 ;; (defn -setFormatExceptionAsString [this format-ex-as-str]
 ;;   (set-opt! this format-ex-as-str))
