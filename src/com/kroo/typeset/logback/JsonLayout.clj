@@ -29,8 +29,6 @@
 ;; TODO: option to register additional ObjectMapper modules.
 ;; TODO: option to format exceptions as data.
 
-(set! *warn-on-reflection* true)
-
 ;; Record providing fast access to JsonLayout options in lieu of fields.
 (defrecord JsonLayoutOpts
   [append-newline
