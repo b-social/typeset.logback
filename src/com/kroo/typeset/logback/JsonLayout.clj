@@ -4,7 +4,7 @@
   (:require [jsonista.core :as j])
   (:import (java.util List Map HashMap)
            (ch.qos.logback.core CoreConstants)
-           (ch.qos.logback.classic.spi ILoggingEvent)
+           (ch.qos.logback.classic.spi ILoggingEvent ThrowableProxy)
            (ch.qos.logback.classic.pattern ThrowableProxyConverter)
            (org.slf4j Marker)
            (org.slf4j.event KeyValuePair)
@@ -14,6 +14,7 @@
    :main    false
    :init    init
    :state   state
+   :exposes-methods {start superStart, stop superStop}
    :methods [[setPrettyPrint [Boolean] void]
              [setRemoveNullKeyValuePairs [Boolean] void]
              [setTimestampFormat [String] void]
@@ -26,7 +27,7 @@
              [setIncludeException [Boolean] void]]))
 
 ;; TODO: option to register additional ObjectMapper modules.
-;; TODO: option to format exceptions as data (+ extract ex-data).
+;; TODO: option to format exceptions as data.
 
 (set! *warn-on-reflection* true)
 
@@ -96,12 +97,13 @@
       (let [^List markers (.getMarkerList event)]
         (when-not (.isEmpty markers)
           (.put m "markers" (mapv #(.getName ^Marker %) markers)))))
-    (when (and (.getThrowableProxy event)
-               (:include-exception opts))
-      (when-let [^String throwable
-                 (.convert ^ThrowableProxyConverter (:ex-converter opts) event)]
-        (when-not (.isEmpty throwable)
-          throwable)))
+    (when-let [tp (and (:include-exception opts)
+                       (.getThrowableProxy event))]
+      (when-let [exd (and (instance? ThrowableProxy tp)
+                          (ex-data (.getThrowable ^ThrowableProxy tp)))]
+        (.put m "ex-data" exd))
+      (when-let [ex-str (.convert ^ThrowableProxyConverter (:ex-converter opts) event)]
+        (.put m "exception" ex-str)))
     (let [s (j/write-value-as-string
               (reduce insert! m (.getKeyValuePairs event))
               (:object-mapper opts))]
@@ -111,6 +113,14 @@
 
 (defn -getContentType ^String [this]
   "application/json")
+
+(defn -start [this]
+  (.start ^ThrowableProxyConverter (:ex-converter @(.state this)))
+  (.superStart this))
+
+(defn -stop [this]
+  (.superStop this)
+  (.stop ^ThrowableProxyConverter (:ex-converter @(.state this))))
 
 
 ;;; -------------------------------------
