@@ -21,8 +21,11 @@ Simple JSON layout component for [Logback][] Classic, with Clojure and [SLF4J][]
 ```clojure
 ;; tools.deps
 com.kroo/typeset.logback {:mvn/version "0.1"}
+ch.qos.logback/logback-classic {:mvn/version "1.4.7"}
+
 ;; Leiningen
 [com.kroo/typeset.logback "0.1"]
+[ch.qos.logback/logback-classic "1.4.7"]
 ```
 
 
