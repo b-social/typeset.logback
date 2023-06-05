@@ -1,4 +1,3 @@
 - Publish JAR.
 - Option to register additional ObjectMapper modules.
 - Option to format exceptions as data.
-- Option to exclude ex-data from logs.

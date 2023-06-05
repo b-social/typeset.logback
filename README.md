@@ -65,6 +65,7 @@ Use Typeset.logback and configure the various options:
                 <includeMdc>false</includeMdc>
                 <includeMarkers>true</includeMarkers>
                 <includeException>true</includeException>
+                <includeExData>true</includeExData>
             </layout>
         </encoder>
     </appender>

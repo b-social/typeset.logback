@@ -24,7 +24,8 @@
              [setIncludeLevelValue [Boolean] void]
              [setIncludeMdc [Boolean] void]
              [setIncludeMarkers [Boolean] void]
-             [setIncludeException [Boolean] void]]))
+             [setIncludeException [Boolean] void]
+             [setIncludeExData [Boolean] void]]))
 
 ;; Record providing fast access to JsonLayout options in lieu of fields.
 (defrecord JsonLayoutOpts
@@ -34,6 +35,7 @@
    include-mdc
    include-markers
    include-exception
+   include-ex-data
    exception-as-str
    object-mapper
    ex-converter])
@@ -50,6 +52,7 @@
                          :include-mdc        false
                          :include-markers    true
                          :include-exception  true
+                         :include-ex-data    true
                          :ex-converter       (ThrowableProxyConverter.)})]
               (assoc opts :object-mapper (j/object-mapper opts))))])
 
@@ -94,7 +97,8 @@
           (.put m "markers" (mapv #(.getName ^Marker %) markers)))))
     (when-let [tp (and (:include-exception opts)
                        (.getThrowableProxy event))]
-      (when-let [exd (and (instance? ThrowableProxy tp)
+      (when-let [exd (and (:include-ex-data opts)
+                          (instance? ThrowableProxy tp)
                           (ex-data (.getThrowable ^ThrowableProxy tp)))]
         (.put m "ex-data" exd))
       (when-let [ex-str (.convert ^ThrowableProxyConverter (:ex-converter opts) event)]
@@ -110,6 +114,8 @@
   "application/json")
 
 (defn -start [this]
+  ;; We have to call `.start` on "ThrowableProxyConverter" to make it
+  ;; include stack traces in logs.
   (.start ^ThrowableProxyConverter (:ex-converter @(.state this)))
   (.superStart this))
 
@@ -162,3 +168,6 @@
 
 (defn -setIncludeException [this include-exception]
   (set-opt! this include-exception))
+
+(defn -setIncludeExData [this include-ex-data]
+  (set-opt! this include-ex-data))

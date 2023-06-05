@@ -50,11 +50,11 @@
 (deftest typeset-options-test
   (let [typeset (doto (JsonLayout.)
                   (.setPrettyPrint true)
-                  (.setIncludeMdc true)
                   (.setIncludeLoggerContext true)
                   (.setIncludeLevelValue true)
-                  (.setIncludeException false)
+                  (.setIncludeMdc true)
                   (.setIncludeMarkers false)
+                  (.setIncludeException false)
                   (.start))
         expected (j/read-value (io/resource "com/kroo/typeset/logback/options.json"))
         actual   (j/read-value (.doLayout typeset log-event))]
