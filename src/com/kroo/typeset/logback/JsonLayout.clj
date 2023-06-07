@@ -7,8 +7,7 @@
            (ch.qos.logback.classic.spi ILoggingEvent ThrowableProxy)
            (ch.qos.logback.classic.pattern ThrowableProxyConverter)
            (org.slf4j Marker)
-           (org.slf4j.event KeyValuePair)
-           (com.fasterxml.jackson.databind ObjectMapper))
+           (org.slf4j.event KeyValuePair))
   (:gen-class
    :extends ch.qos.logback.core.LayoutBase
    :main    false
