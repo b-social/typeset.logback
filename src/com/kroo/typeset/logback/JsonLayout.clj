@@ -88,7 +88,9 @@
             {:timestamp (Instant/now)
              :message   msg
              :level     "ERROR"
+             :logger    "com.kroo.typeset.logback.JsonLayout"
              :log-event {:timestamp (.toString (.getInstant event))
+                         :logger    (.getLoggerName event)
                          :thread    (.getThreadName event)
                          :message   (.getFormattedMessage event)
                          :level     (.toString (.getLevel event))}
@@ -96,10 +98,11 @@
            CoreConstants/LINE_SEPARATOR)
       ;; Another failover for when something is really seriously wrong!
       (catch Throwable _
-        (format "{\"timestamp\":\"%s\"\"message\":\"%s\",\"exception\":\"%s\",\"level\":\"ERROR\"}\n"
+        (format "{\"timestamp\":\"%s\"\"message\":\"%s\",\"exception\":\"%s\",\"level\":\"ERROR\",\"logger\":\"%s\"}\n"
                 (Instant/now)
                 msg
-                (.toString e))))))
+                (.toString e)
+                "com.kroo.typeset.logback.JsonLayout")))))
 
 (defn -doLayout
   "The core method on a Logback layout component.  This method takes a logging

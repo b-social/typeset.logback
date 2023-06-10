@@ -1,9 +1,11 @@
 {
   "timestamp": "2023-06-10T15:35:10.122355Z",
   "message": "com.kroo.typeset.logback.JsonLayout was unable to format log event!",
+  "logger": "com.kroo.typeset.logback.JsonLayout",
   "level": "ERROR",
   "log-event": {
     "timestamp": "2023-06-05T22:45:00Z",
+    "logger": "my.logger",
     "thread": "my.thread",
     "message": "my formatted message",
     "level": "WARN"
