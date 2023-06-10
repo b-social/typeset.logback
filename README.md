@@ -118,6 +118,20 @@ Example log output (with pretty printing enabled):
 If you need a structured logging frontend for Clojure, [Epilogue](https://github.com/b-social/epilogue) pairs perfectly with Typeset.logback.
 
 
+## Troubleshooting
+
+If for some reason you are not getting any logs or are missing some, an exception is likely being thrown somewhere.  You can edit your `logback.xml` file to include `debug="true"` (or add the `-Dlogback.debug=true` JVM option) to see the exception.
+
+```xml
+<!-- logback.xml -->
+<configuration debug="true" ...>
+  ...
+</configuration>
+```
+
+If the exception is occurring within Typeset.logback, please open an issue and include the exception message and stack trace.
+
+
 ## Legal
 
 Copyright © 2023 Kroo Bank Ltd.
