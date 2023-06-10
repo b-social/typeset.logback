@@ -85,16 +85,17 @@
   (let [msg "com.kroo.typeset.logback.JsonLayout was unable to format log event!"]
     (try
       (str (j/write-value-as-string
-            {:timestamp (Instant/now)
-             :message   msg
-             :level     "ERROR"
-             :logger    "com.kroo.typeset.logback.JsonLayout"
-             :log-event {:timestamp (.toString (.getInstant event))
-                         :logger    (.getLoggerName event)
-                         :thread    (.getThreadName event)
-                         :message   (.getFormattedMessage event)
-                         :level     (.toString (.getLevel event))}
-             :exception (Throwable->map e)})
+            {:timestamp  (Instant/now)
+             :message    msg
+             :level      "ERROR"
+             :logger     "com.kroo.typeset.logback.JsonLayout"
+             :log_event  {:timestamp (.toString (.getInstant event))
+                          :logger    (.getLoggerName event)
+                          :thread    (.getThreadName event)
+                          :message   (.getFormattedMessage event)
+                          :level     (.toString (.getLevel event))}
+             :ex_message (str e)
+             :exception  (Throwable->map e)})
            CoreConstants/LINE_SEPARATOR)
       ;; Another failover for when something is very seriously wrong!
       (catch Throwable _

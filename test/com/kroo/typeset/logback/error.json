@@ -1,15 +1,16 @@
 {
-  "timestamp": "2023-06-10T15:35:10.122355Z",
+  "timestamp": "2023-06-10T16:10:50.384880Z",
   "message": "com.kroo.typeset.logback.JsonLayout was unable to format log event!",
-  "logger": "com.kroo.typeset.logback.JsonLayout",
   "level": "ERROR",
-  "log-event": {
+  "logger": "com.kroo.typeset.logback.JsonLayout",
+  "log_event": {
     "timestamp": "2023-06-05T22:45:00Z",
     "logger": "my.logger",
     "thread": "my.thread",
     "message": "my formatted message",
     "level": "WARN"
   },
+  "ex_message": "clojure.lang.ExceptionInfo: Hello {:something \"went wrong!\"}",
   "exception": {
     "via": [
       {
@@ -19,134 +20,14 @@
           "something": "went wrong!"
         },
         "at": [
-          "com.kroo.typeset.logback.JsonLayout_test$fn$reify__380",
-          "getMarkerList",
-          "JsonLayout_test.clj",
-          70
+          "clojure.lang.AFn",
+          "applyToHelper",
+          "AFn.java",
+          156
         ]
       }
     ],
     "trace": [
-      [
-        "com.kroo.typeset.logback.JsonLayout_test$fn$reify__380",
-        "getMarkerList",
-        "JsonLayout_test.clj",
-        70
-      ],
-      [
-        "com.kroo.typeset.logback.JsonLayout$_doLayout",
-        "invokeStatic",
-        "JsonLayout.clj",
-        124
-      ],
-      [
-        "com.kroo.typeset.logback.JsonLayout$_doLayout",
-        "invoke",
-        "JsonLayout.clj",
-        104
-      ],
-      [
-        "com.kroo.typeset.logback.JsonLayout",
-        "doLayout",
-        null,
-        -1
-      ],
-      [
-        "com.kroo.typeset.logback.JsonLayout_test$fn__383",
-        "invokeStatic",
-        "JsonLayout_test.clj",
-        90
-      ],
-      [
-        "com.kroo.typeset.logback.JsonLayout_test$fn__383",
-        "invoke",
-        "JsonLayout_test.clj",
-        84
-      ],
-      [
-        "clojure.test$test_var$fn__9856",
-        "invoke",
-        "test.clj",
-        717
-      ],
-      [
-        "clojure.test$test_var",
-        "invokeStatic",
-        "test.clj",
-        717
-      ],
-      [
-        "clojure.test$test_var",
-        "invoke",
-        "test.clj",
-        708
-      ],
-      [
-        "clojure.test$test_vars$fn__9882$fn__9887",
-        "invoke",
-        "test.clj",
-        735
-      ],
-      [
-        "clojure.test$default_fixture",
-        "invokeStatic",
-        "test.clj",
-        687
-      ],
-      [
-        "clojure.test$default_fixture",
-        "invoke",
-        "test.clj",
-        683
-      ],
-      [
-        "clojure.test$test_vars$fn__9882",
-        "invoke",
-        "test.clj",
-        735
-      ],
-      [
-        "clojure.test$default_fixture",
-        "invokeStatic",
-        "test.clj",
-        687
-      ],
-      [
-        "clojure.test$default_fixture",
-        "invoke",
-        "test.clj",
-        683
-      ],
-      [
-        "clojure.test$test_vars",
-        "invokeStatic",
-        "test.clj",
-        731
-      ],
-      [
-        "clojure.test$test_all_vars",
-        "invokeStatic",
-        "test.clj",
-        737
-      ],
-      [
-        "clojure.test$test_ns",
-        "invokeStatic",
-        "test.clj",
-        758
-      ],
-      [
-        "clojure.test$test_ns",
-        "invoke",
-        "test.clj",
-        743
-      ],
-      [
-        "user$eval231$fn__294",
-        "invoke",
-        "form-init865615300287871382.clj",
-        1
-      ],
       [
         "clojure.lang.AFn",
         "applyToHelper",
@@ -160,52 +41,70 @@
         144
       ],
       [
-        "clojure.core$apply",
+        "clojure.lang.Compiler$InvokeExpr",
+        "eval",
+        "Compiler.java",
+        3714
+      ],
+      [
+        "clojure.lang.Compiler$DefExpr",
+        "eval",
+        "Compiler.java",
+        457
+      ],
+      [
+        "clojure.lang.Compiler",
+        "eval",
+        "Compiler.java",
+        7199
+      ],
+      [
+        "clojure.lang.Compiler",
+        "load",
+        "Compiler.java",
+        7653
+      ],
+      [
+        "clojure.lang.RT",
+        "loadResourceScript",
+        "RT.java",
+        381
+      ],
+      [
+        "clojure.lang.RT",
+        "loadResourceScript",
+        "RT.java",
+        372
+      ],
+      [
+        "clojure.lang.RT",
+        "load",
+        "RT.java",
+        459
+      ],
+      [
+        "clojure.lang.RT",
+        "load",
+        "RT.java",
+        424
+      ],
+      [
+        "clojure.core$load$fn__6908",
+        "invoke",
+        "core.clj",
+        6161
+      ],
+      [
+        "clojure.core$load",
         "invokeStatic",
         "core.clj",
-        669
+        6160
       ],
       [
-        "leiningen.core.injected$compose_hooks$fn__158",
+        "clojure.core$load",
         "doInvoke",
-        "form-init865615300287871382.clj",
-        1
-      ],
-      [
-        "clojure.lang.RestFn",
-        "applyTo",
-        "RestFn.java",
-        137
-      ],
-      [
-        "clojure.core$apply",
-        "invokeStatic",
         "core.clj",
-        667
-      ],
-      [
-        "leiningen.core.injected$run_hooks",
-        "invokeStatic",
-        "form-init865615300287871382.clj",
-        1
-      ],
-      [
-        "leiningen.core.injected$prepare_for_hooks$fn__163$fn__164",
-        "doInvoke",
-        "form-init865615300287871382.clj",
-        1
-      ],
-      [
-        "clojure.lang.RestFn",
-        "applyTo",
-        "RestFn.java",
-        137
-      ],
-      [
-        "clojure.lang.AFunction$1",
-        "doInvoke",
-        "AFunction.java",
-        31
+        6144
       ],
       [
         "clojure.lang.RestFn",
@@ -214,40 +113,40 @@
         408
       ],
       [
-        "clojure.core$map$fn__5935",
+        "clojure.core$load_one",
+        "invokeStatic",
+        "core.clj",
+        5933
+      ],
+      [
+        "clojure.core$load_one",
         "invoke",
         "core.clj",
-        2772
+        5928
       ],
       [
-        "clojure.lang.LazySeq",
-        "sval",
-        "LazySeq.java",
-        42
+        "clojure.core$load_lib$fn__6850",
+        "invoke",
+        "core.clj",
+        5975
       ],
       [
-        "clojure.lang.LazySeq",
-        "seq",
-        "LazySeq.java",
-        51
+        "clojure.core$load_lib",
+        "invokeStatic",
+        "core.clj",
+        5974
       ],
       [
-        "clojure.lang.Cons",
-        "next",
-        "Cons.java",
-        39
-      ],
-      [
-        "clojure.lang.RT",
-        "boundedLength",
-        "RT.java",
-        1790
+        "clojure.core$load_lib",
+        "doInvoke",
+        "core.clj",
+        5953
       ],
       [
         "clojure.lang.RestFn",
         "applyTo",
         "RestFn.java",
-        130
+        142
       ],
       [
         "clojure.core$apply",
@@ -256,16 +155,40 @@
         669
       ],
       [
-        "clojure.test$run_tests",
+        "clojure.core$load_libs",
         "invokeStatic",
-        "test.clj",
-        768
+        "core.clj",
+        6016
       ],
       [
-        "clojure.test$run_tests",
+        "clojure.core$load_libs",
         "doInvoke",
-        "test.clj",
-        768
+        "core.clj",
+        6000
+      ],
+      [
+        "clojure.lang.RestFn",
+        "applyTo",
+        "RestFn.java",
+        137
+      ],
+      [
+        "clojure.core$apply",
+        "invokeStatic",
+        "core.clj",
+        669
+      ],
+      [
+        "clojure.core$require",
+        "invokeStatic",
+        "core.clj",
+        6038
+      ],
+      [
+        "clojure.core$require",
+        "doInvoke",
+        "core.clj",
+        6038
       ],
       [
         "clojure.lang.RestFn",
@@ -280,33 +203,15 @@
         667
       ],
       [
-        "user$eval231$fn__304$fn__337",
-        "invoke",
-        "form-init865615300287871382.clj",
-        1
-      ],
-      [
-        "user$eval231$fn__304$fn__305",
-        "invoke",
-        "form-init865615300287871382.clj",
-        1
-      ],
-      [
-        "user$eval231$fn__304",
-        "invoke",
-        "form-init865615300287871382.clj",
-        1
-      ],
-      [
         "user$eval231",
         "invokeStatic",
-        "form-init865615300287871382.clj",
+        "form-init7282491527654827107.clj",
         1
       ],
       [
         "user$eval231",
         "invoke",
-        "form-init865615300287871382.clj",
+        "form-init7282491527654827107.clj",
         1
       ],
       [
