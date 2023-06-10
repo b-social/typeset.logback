@@ -96,12 +96,12 @@
                          :level     (.toString (.getLevel event))}
              :exception (Throwable->map e)})
            CoreConstants/LINE_SEPARATOR)
-      ;; Another failover for when something is really seriously wrong!
+      ;; Another failover for when something is very seriously wrong!
       (catch Throwable _
-        (format "{\"timestamp\":\"%s\"\"message\":\"%s\",\"exception\":\"%s\",\"level\":\"ERROR\",\"logger\":\"%s\"}\n"
+        (format "{\"timestamp\":\"%s\"\"message\":\"%s\",\"exception\":%s,\"level\":\"ERROR\",\"logger\":\"%s\"}\n"
                 (Instant/now)
                 msg
-                (.toString e)
+                (pr-str (or (str e) "null"))
                 "com.kroo.typeset.logback.JsonLayout")))))
 
 (defn -doLayout
