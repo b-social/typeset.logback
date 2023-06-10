@@ -92,11 +92,11 @@
     (when (:include-level-val opts)
       (.put m "level_value" (.toInt (.getLevel event))))
     (when (:include-mdc opts)
-      (let [^Map mdc (.getMDCPropertyMap event)]
+      (when-let [^Map mdc (.getMDCPropertyMap event)]
         (when-not (.isEmpty mdc)
           (.put m "mdc" mdc))))
     (when (:include-markers opts)
-      (let [^List markers (.getMarkerList event)]
+      (when-let [^List markers (.getMarkerList event)]
         (when-not (.isEmpty markers)
           (.put m "markers" (mapv #(.getName ^Marker %) markers)))))
     (when-let [tp (and (:include-exception opts)

@@ -47,6 +47,10 @@ Use Typeset.logback with the default options:
     </appender>
 
     <logger name="TEMP" level="DEBUG"/>
+
+    <root level="INFO">
+        <appender-ref ref="CONSOLE" />
+    </root>
 </configuration>
 ```
 
@@ -75,6 +79,10 @@ Use Typeset.logback and configure the various options:
     </appender>
 
     <logger name="TEMP" level="DEBUG"/>
+
+    <root level="INFO">
+        <appender-ref ref="CONSOLE" />
+    </root>
 </configuration>
 ```
 
@@ -106,6 +114,8 @@ Example log output (with pretty printing enabled):
   },
 }
 ```
+
+If you need a structured logging frontend for Clojure, [Epilogue](https://github.com/b-social/epilogue) pairs perfectly with Typeset.logback.
 
 
 ## Legal
