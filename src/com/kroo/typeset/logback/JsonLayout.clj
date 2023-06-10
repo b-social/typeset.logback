@@ -2,10 +2,11 @@
   "Simple JSON layout component for Logback Classic, with Clojure and SLF4J 2+
    key value attribute support."
   (:require [jsonista.core :as j])
-  (:import (java.util List Map HashMap)
-           (ch.qos.logback.core CoreConstants)
+  (:import (ch.qos.logback.classic.pattern ThrowableProxyConverter)
            (ch.qos.logback.classic.spi ILoggingEvent ThrowableProxy)
-           (ch.qos.logback.classic.pattern ThrowableProxyConverter)
+           (ch.qos.logback.core CoreConstants)
+           (java.time Instant)
+           (java.util HashMap List Map)
            (org.slf4j Marker)
            (org.slf4j.event KeyValuePair))
   (:gen-class
@@ -77,44 +78,71 @@
                    (map (fn [x] `(.put ~@x))))
              kvs)))
 
+(defn- log-typeset-error
+  "In the rare event that Typeset throws an exception while generating the log
+   string, try to convert that exception into a log instead."
+  [^ILoggingEvent event ^Throwable e]
+  (let [msg "com.kroo.typeset.logback.JsonLayout was unable to format log event!"]
+    (try
+      (str (j/write-value-as-string
+            {:timestamp (Instant/now)
+             :message   msg
+             :level     "ERROR"
+             :log-event {:timestamp (.toString (.getInstant event))
+                         :thread    (.getThreadName event)
+                         :message   (.getFormattedMessage event)
+                         :level     (.toString (.getLevel event))}
+             :exception (Throwable->map e)})
+           CoreConstants/LINE_SEPARATOR)
+      ;; Another failover for when something is really seriously wrong!
+      (catch Throwable _
+        (format "{\"timestamp\":\"%s\"\"message\":\"%s\",\"exception\":\"%s\",\"level\":\"ERROR\"}\n"
+                (Instant/now)
+                msg
+                (.toString e))))))
+
 (defn -doLayout
   "The core method on a Logback layout component.  This method takes a logging
    event and returns that log formatted as a JSON string."
   ^String [this ^ILoggingEvent event]
-  (let [^JsonLayoutOpts opts @(.state this)
-        ^Map m (->HashMap "timestamp" (.getInstant event)
-                          "level"     (.toString (.getLevel event))
-                          "logger"    (.getLoggerName event)
-                          "thread"    (.getThreadName event)
-                          "message"   (.getFormattedMessage event))]
-    (when (:include-logger-ctx opts)
-      (.put m "logger_context" (.getName (.getLoggerContextVO event))))
-    (when (:include-level-val opts)
-      (.put m "level_value" (.toInt (.getLevel event))))
-    (when (:include-mdc opts)
-      (when-let [^Map mdc (.getMDCPropertyMap event)]
-        (when-not (.isEmpty mdc)
-          (.put m "mdc" mdc))))
-    (when (:include-markers opts)
-      (when-let [^List markers (.getMarkerList event)]
-        (when-not (.isEmpty markers)
-          (.put m "markers" (mapv #(.getName ^Marker %) markers)))))
-    (when-let [tp (and (:include-exception opts)
-                       (.getThrowableProxy event))]
-      (when-let [exd (and (:include-ex-data opts)
-                          (instance? ThrowableProxy tp)
-                          (ex-data (.getThrowable ^ThrowableProxy tp)))]
-        (.put m "ex-data" exd))
-      (when-let [ex-str (.convert ^ThrowableProxyConverter (:ex-converter opts) event)]
-        (.put m "exception" ex-str)))
-    (let [s (j/write-value-as-string
-              (reduce insert! m (.getKeyValuePairs event))
-              (:object-mapper opts))]
-      (if (:append-newline opts)
-        (str s CoreConstants/LINE_SEPARATOR)
-        s))))
+  (try
+    (let [^JsonLayoutOpts opts @(.state this)
+          ^Map m (->HashMap "timestamp" (.getInstant event)
+                            "level"     (.toString (.getLevel event))
+                            "logger"    (.getLoggerName event)
+                            "thread"    (.getThreadName event)
+                            "message"   (.getFormattedMessage event))]
+      (when (:include-logger-ctx opts)
+        (.put m "logger_context" (.getName (.getLoggerContextVO event))))
+      (when (:include-level-val opts)
+        (.put m "level_value" (.toInt (.getLevel event))))
+      (when (:include-mdc opts)
+        (when-let [^Map mdc (.getMDCPropertyMap event)]
+          (when-not (.isEmpty mdc)
+            (.put m "mdc" mdc))))
+      (when (:include-markers opts)
+        (when-let [^List markers (.getMarkerList event)]
+          (when-not (.isEmpty markers)
+            (.put m "markers" (mapv #(.getName ^Marker %) markers)))))
+      (when-let [tp (and (:include-exception opts)
+                         (.getThrowableProxy event))]
+        (when-let [exd (and (:include-ex-data opts)
+                            (instance? ThrowableProxy tp)
+                            (ex-data (.getThrowable ^ThrowableProxy tp)))]
+          (.put m "ex-data" exd))
+        (when-let [ex-str (.convert ^ThrowableProxyConverter (:ex-converter opts) event)]
+          (.put m "exception" ex-str)))
+      (let [s (j/write-value-as-string
+               (reduce insert! m (.getKeyValuePairs event))
+               (:object-mapper opts))]
+        (if (:append-newline opts)
+          (str s CoreConstants/LINE_SEPARATOR)
+          s)))
+    ;; Failover logging in case we are unable to create the log string!
+    (catch Throwable e
+      (log-typeset-error event e))))
 
-(defn -getContentType ^String [this]
+(defn -getContentType ^String [_this]
   "application/json")
 
 (defn -start [this]

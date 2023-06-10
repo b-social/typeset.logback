@@ -3,7 +3,7 @@
             [clojure.string :as str]
             [clojure.java.io :as io]
             [jsonista.core :as j])
-  (:import 
+  (:import
    (com.kroo.typeset.logback JsonLayout)
    (ch.qos.logback.classic.spi ILoggingEvent LoggerContextVO ThrowableProxy)
    (ch.qos.logback.classic Level LoggerContext)
@@ -62,3 +62,43 @@
     ;;       (.doLayout typeset log-event))
     (testing "Returns expected log"
       (is (= expected actual)))))
+
+(def bad-log-event-exception
+  (ex-info "Hello" {:something "went wrong!"}))
+
+(def bad-log-event
+  (let [mdc {"hello" "world"}
+        kvs [(KeyValuePair. "timestamp" {:foo {:bar 12.4}})
+             (KeyValuePair. "things" [1 {:hi {"there" 2}} 3 4])]]
+    (reify ILoggingEvent
+      (getInstant [_this] (Instant/parse "2023-06-05T22:45:00.0000Z"))
+      (getLevel [_this] Level/WARN)
+      (getLoggerName [_this] "my.logger")
+      (getThreadName [_this] "my.thread")
+      (getFormattedMessage [_this] "my formatted message")
+      (getMDCPropertyMap [_this] mdc)
+      (getKeyValuePairs [_this] kvs)
+      (getMarkerList [_this] (throw bad-log-event-exception))
+      (getThrowableProxy [_this]
+        (ThrowableProxy. (ex-info "Some throwable" {:foo 42})))
+      (getLoggerContextVO [_this]
+        (LoggerContextVO. (LoggerContext.))))))
+
+(deftest typeset-error-test
+  (let [typeset (doto (JsonLayout.)
+                  (.start))
+        expected (j/read-value (io/resource "com/kroo/typeset/logback/error.json"))
+        actual   (j/read-value (.doLayout typeset bad-log-event))]
+    ;; (spit (io/file (io/resource "com/kroo/typeset/logback/error.json"))
+    ;;       (.doLayout typeset bad-log-event))
+    (testing "Returns failover log"
+      (is (= (dissoc expected "exception" "timestamp")
+             (dissoc actual "exception" "timestamp")))
+      (testing "Includes timestamp of exception"
+        (is (contains? actual "timestamp")))
+      (testing "Includes information about the exception"
+        (is (contains? actual "exception"))
+        (is (map? (actual "exception")))
+        (is (seq (actual "exception")))
+        (is (= (-> bad-log-event-exception Throwable->map j/write-value-as-string j/read-value)
+               (actual "exception")))))))

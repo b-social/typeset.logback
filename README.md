@@ -120,7 +120,7 @@ If you need a structured logging frontend for Clojure, [Epilogue](https://github
 
 ## Troubleshooting
 
-If for some reason you are not getting any logs or are missing some, an exception is likely being thrown somewhere.  You can edit your `logback.xml` file to include `debug="true"` (or add the `-Dlogback.debug=true` JVM option) to see the exception.
+If for some reason you are not getting any logs or are missing some, either your configuration is incorrect or an exception is likely being thrown somewhere.  To get some troubleshooting info, you can edit your `logback.xml` file to include `debug="true"` (or add the `-Dlogback.debug=true` JVM option).
 
 ```xml
 <!-- logback.xml -->
@@ -129,7 +129,7 @@ If for some reason you are not getting any logs or are missing some, an exceptio
 </configuration>
 ```
 
-If the exception is occurring within Typeset.logback, please open an issue and include the exception message and stack trace.
+If an exception occurs while Typeset.logback is formatting a log event, an "ERROR" log will be appended to the Logback appender that contains details of the exception.
 
 
 ## Legal
