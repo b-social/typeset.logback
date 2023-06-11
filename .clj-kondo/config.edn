@@ -1,0 +1,3 @@
+{:skip-comments true
+ :linters
+ {:refer-all {:exclude [clojure.test]}}}

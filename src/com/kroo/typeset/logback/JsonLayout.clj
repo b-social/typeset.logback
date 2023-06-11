@@ -28,17 +28,16 @@
              [setIncludeExData [Boolean] void]]))
 
 ;; Record providing fast access to JsonLayout options in lieu of fields.
-(defrecord JsonLayoutOpts
-  [append-newline
-   include-logger-ctx
-   include-level-val
-   include-mdc
-   include-markers
-   include-exception
-   include-ex-data
-   exception-as-str
-   object-mapper
-   ex-converter])
+(defrecord JsonLayoutOpts [append-newline
+                           include-logger-ctx
+                           include-level-val
+                           include-mdc
+                           include-markers
+                           include-exception
+                           include-ex-data
+                           exception-as-str
+                           object-mapper
+                           ex-converter])
 
 (defn -init
   "Method invoked during object initialisation.  Sets the default value for the
@@ -158,7 +157,6 @@
 (defn -stop [this]
   (.superStop this)
   (.stop ^ThrowableProxyConverter (:ex-converter @(.state this))))
-
 
 ;;; -------------------------------------
 ;;; Expose Logback configuration options.

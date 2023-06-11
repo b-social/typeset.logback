@@ -11,4 +11,10 @@
                 *assert*             false}
   :dependencies [[org.clojure/clojure "1.11.1" :scope "provided"]
                  [ch.qos.logback/logback-classic "1.4.7" :scope "provided"]
-                 [metosin/jsonista "0.3.7"]])
+                 [metosin/jsonista "0.3.7"]]
+  :plugins [[com.github.clj-kondo/lein-clj-kondo "RELEASE"]
+            [com.github.liquidz/antq "RELEASE"]
+            [dev.weavejester/lein-cljfmt "RELEASE"]]
+  :aliases {"lint" ["clj-kondo" "--lint" "src" "test"]
+            "fmt"  ["cljfmt" "fix"]
+            "antq" ["with-profile" "+dev" "antq"]})

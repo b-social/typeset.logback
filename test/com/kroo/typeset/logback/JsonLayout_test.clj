@@ -46,7 +46,6 @@
       (is (str/starts-with? (actual "exception")
                             "clojure.lang.ExceptionInfo: Some throwable\n\tat com.kroo.typeset.logback.JsonLayout_test")))))
 
-
 (deftest typeset-options-test
   (let [typeset (doto (JsonLayout.)
                   (.setPrettyPrint true)
