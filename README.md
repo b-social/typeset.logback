@@ -8,6 +8,8 @@ Simple JSON layout component for [Logback][] Classic, with Clojure and [SLF4J][]
 
 ## Installation
 
+[![Clojars Project](https://img.shields.io/clojars/v/com.kroo/typeset.logback.svg)](https://clojars.org/com.kroo/typeset.logback)
+
 ```clojure
 ;; tools.deps
 com.kroo/typeset.logback {:mvn/version "0.1"}
