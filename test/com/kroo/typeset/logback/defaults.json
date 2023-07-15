@@ -6,7 +6,7 @@
     }
   },
   "level": "WARN",
-  "logger": "my.logger",
+  "logger_name": "my.logger",
   "ex-data": {
     "foo": 42
   },
@@ -20,7 +20,7 @@
     3,
     4
   ],
-  "thread": "my.thread",
+  "thread_name": "my.thread",
   "message": "my formatted message",
   "markers": [
     "MyMarker"

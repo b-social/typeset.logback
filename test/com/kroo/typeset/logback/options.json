@@ -6,13 +6,13 @@
   },
   "level" : "WARN",
   "level_value" : 30000,
-  "logger" : "my.logger",
+  "logger_name" : "my.logger",
   "things" : [ 1, {
     "hi" : {
       "there" : 2
     }
   }, 3, 4 ],
-  "thread" : "my.thread",
+  "thread_name" : "my.thread",
   "message" : "my formatted message",
   "mdc" : {
     "hello" : "world"

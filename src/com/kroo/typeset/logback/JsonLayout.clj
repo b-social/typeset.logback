@@ -84,21 +84,21 @@
   (let [msg "com.kroo.typeset.logback.JsonLayout was unable to format log event!"]
     (try
       (str (j/write-value-as-string
-            {:timestamp  (Instant/now)
-             :message    msg
-             :level      "ERROR"
-             :logger     "com.kroo.typeset.logback.JsonLayout"
-             :log_event  {:timestamp (.toString (.getInstant event))
-                          :logger    (.getLoggerName event)
-                          :thread    (.getThreadName event)
-                          :message   (.getFormattedMessage event)
-                          :level     (.toString (.getLevel event))}
-             :ex_message (str e)
-             :exception  (Throwable->map e)})
+            {:timestamp   (Instant/now)
+             :message     msg
+             :level       "ERROR"
+             :logger_name "com.kroo.typeset.logback.JsonLayout"
+             :log_event   {:timestamp   (.toString (.getInstant event))
+                           :logger_name (.getLoggerName event)
+                           :thread_name (.getThreadName event)
+                           :message     (.getFormattedMessage event)
+                           :level       (.toString (.getLevel event))}
+             :ex_message  (str e)
+             :exception   (Throwable->map e)})
            CoreConstants/LINE_SEPARATOR)
       ;; Another failover for when something is very seriously wrong!
       (catch Throwable _
-        (format "{\"timestamp\":\"%s\"\"message\":%s,\"exception\":%s,\"level\":\"ERROR\",\"logger\":\"%s\"}\n"
+        (format "{\"timestamp\":\"%s\"\"message\":%s,\"exception\":%s,\"level\":\"ERROR\",\"logger_name\":\"%s\"}\n"
                 (Instant/now)
                 (pr-str msg)
                 (pr-str (or (str e) "null"))
@@ -110,11 +110,11 @@
   ^String [this ^ILoggingEvent event]
   (try
     (let [^JsonLayoutOpts opts @(.state this)
-          ^Map m (->HashMap "timestamp" (.getInstant event)
-                            "level"     (.toString (.getLevel event))
-                            "logger"    (.getLoggerName event)
-                            "thread"    (.getThreadName event)
-                            "message"   (.getFormattedMessage event))]
+          ^Map m (->HashMap "timestamp"   (.getInstant event)
+                            "level"       (.toString (.getLevel event))
+                            "logger_name" (.getLoggerName event)
+                            "thread_name" (.getThreadName event)
+                            "message"     (.getFormattedMessage event))]
       (when (:include-logger-ctx opts)
         (.put m "logger_context" (.getName (.getLoggerContextVO event))))
       (when (:include-level-val opts)
