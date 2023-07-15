@@ -45,21 +45,21 @@
   "Method invoked during object initialisation.  Sets the default value for the
   \"state\" field."
   []
-  [[] (atom (let [opts (map->JsonLayoutOpts
-                        {:pretty             false
-                         :strip-nils         true
-                         :date-format        "yyyy-MM-dd'T'HH:mm:ss'Z'"
-                         :escape-non-ascii   false
-                         :append-newline     true
-                         :include-logger-ctx false
-                         :include-level-val  false
-                         :include-mdc        false
-                         :flatten-mdc        false
-                         :include-markers    true
-                         :include-exception  true
-                         :include-ex-data    true
-                         :ex-converter       (ThrowableProxyConverter.)})]
-              (assoc opts :object-mapper (j/object-mapper opts))))])
+  [[] (volatile! (let [opts (map->JsonLayoutOpts
+                             {:pretty             false
+                              :strip-nils         true
+                              :date-format        "yyyy-MM-dd'T'HH:mm:ss'Z'"
+                              :escape-non-ascii   false
+                              :append-newline     true
+                              :include-logger-ctx false
+                              :include-level-val  false
+                              :include-mdc        false
+                              :flatten-mdc        false
+                              :include-markers    true
+                              :include-exception  true
+                              :include-ex-data    true
+                              :ex-converter       (ThrowableProxyConverter.)})]
+                   (assoc opts :object-mapper (j/object-mapper opts))))])
 
 (defn- insert-kvp!
   "Inserts a key value pair into a Java map.  If a key with the same name
@@ -177,7 +177,7 @@
 ;;; Expose Logback configuration options.
 
 (defmacro ^:private set-opt! [this opt]
-  `(swap! (.state ~this) assoc ~(keyword opt) ~opt))
+  `(vswap! (.state ~this) assoc ~(keyword opt) ~opt))
 
 (defn- update-opt+mapper
   "Update an option in the option map and builds a new Jackson ObjectMapper."
@@ -186,20 +186,20 @@
     (assoc opts :object-mapper (j/object-mapper opts))))
 
 (defn -setPrettyPrint [this pretty-print?]
-  (swap! (.state this) update-opt+mapper
-         :pretty pretty-print?))
+  (vswap! (.state this) update-opt+mapper
+          :pretty pretty-print?))
 
 (defn -setRemoveNullKeyValuePairs [this remove-nil-kvs?]
-  (swap! (.state this) update-opt+mapper
-         :strip-nils remove-nil-kvs?))
+  (vswap! (.state this) update-opt+mapper
+          :strip-nils remove-nil-kvs?))
 
 (defn -setTimestampFormat [this timestamp-format]
-  (swap! (.state this) update-opt+mapper
-         :date-format timestamp-format))
+  (vswap! (.state this) update-opt+mapper
+          :date-format timestamp-format))
 
 (defn -setEscapeNonAsciiCharacters [this escape-non-ascii?]
-  (swap! (.state this) update-opt+mapper
-         :escape-non-ascii escape-non-ascii?))
+  (vswap! (.state this) update-opt+mapper
+          :escape-non-ascii escape-non-ascii?))
 
 (defn -setAppendLineSeparator [this append-newline]
   (set-opt! this append-newline))
