@@ -1,0 +1,16 @@
+{:paths ["src" "target/classes"]
+ :deps {org.clojure/clojure {:mvn/version "1.11.1", :mvn/scope "provided"}
+        ch.qos.logback/logback-classic {:mvn/version "1.4.8"}
+        metosin/jsonista {:mvn/version "0.3.7"}}
+ :deps/prep-lib {:alias :build
+                 :fn compile
+                 :ensure "target/classes"}
+ :aliases
+ {:test  {:extra-paths ["test"]
+          :extra-deps {lambdaisland/kaocha {:mvn/version "1.85.1342"}}
+          :exec-fn kaocha.runner/exec-fn}
+  :build {:extra-paths ["build"]
+          :deps {io.github.clojure/tools.build
+                 {:git/tag "v0.9.4", :git/sha "76b78fe"}
+                 slipset/deps-deploy {:mvn/version "0.2.1"}}
+          :ns-default build}}}

@@ -3,16 +3,12 @@
             [clojure.string :as str]
             [clojure.java.io :as io]
             [jsonista.core :as j])
-  (:import
-   (com.kroo.typeset.logback JsonLayout)
-   (ch.qos.logback.classic.spi ILoggingEvent LoggerContextVO ThrowableProxy)
-   (ch.qos.logback.classic Level LoggerContext)
-   (org.slf4j.event KeyValuePair)
-   (org.slf4j MarkerFactory)
-   (java.time Instant)))
-
-(binding [*compiler-options* {:direct-linking true}]
-  (compile 'com.kroo.typeset.logback.JsonLayout))
+  (:import (com.kroo.typeset.logback JsonLayout)
+           (ch.qos.logback.classic.spi ILoggingEvent LoggerContextVO ThrowableProxy)
+           (ch.qos.logback.classic Level LoggerContext)
+           (org.slf4j.event KeyValuePair)
+           (org.slf4j MarkerFactory)
+           (java.time Instant)))
 
 (def log-event
   (let [mdc {"hello" "world"}
