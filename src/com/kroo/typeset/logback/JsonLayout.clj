@@ -100,18 +100,18 @@
             {:timestamp   (Instant/now)
              :message     msg
              :level       "ERROR"
-             :logger_name "com.kroo.typeset.logback.JsonLayout"
-             :log_event   {:timestamp   (.toString (.getInstant event))
-                           :logger_name (.getLoggerName event)
-                           :thread_name (.getThreadName event)
-                           :message     (.getFormattedMessage event)
-                           :level       (.toString (.getLevel event))}
+             :logger.name "com.kroo.typeset.logback.JsonLayout"
+             :log_event   {:timestamp          (.toString (.getInstant event))
+                           :logger.name        (.getLoggerName event)
+                           :logger.thread_name (.getThreadName event)
+                           :message            (.getFormattedMessage event)
+                           :level              (.toString (.getLevel event))}
              :ex_message  (str e)
              :exception   (Throwable->map e)})
            CoreConstants/LINE_SEPARATOR)
       ;; Another failover for when something is very seriously wrong!
       (catch Throwable _
-        (format "{\"timestamp\":\"%s\"\"message\":%s,\"exception\":%s,\"level\":\"ERROR\",\"logger_name\":\"%s\"}\n"
+        (format "{\"timestamp\":\"%s\"\"message\":%s,\"exception\":%s,\"level\":\"ERROR\",\"logger.name\":\"%s\"}\n"
                 (Instant/now)
                 (pr-str msg)
                 (pr-str (or (str e) "null"))
@@ -123,13 +123,13 @@
   ^String [this ^ILoggingEvent event]
   (try
     (let [^JsonLayoutOpts opts @(.state this)
-          ^Map m (->HashMap "timestamp"   (.getInstant event)
-                            "level"       (.toString (.getLevel event))
-                            "logger_name" (.getLoggerName event)
-                            "thread_name" (.getThreadName event)
-                            "message"     (.getFormattedMessage event))]
+          ^Map m (->HashMap "timestamp"          (.getInstant event)
+                            "level"              (.toString (.getLevel event))
+                            "logger.name"        (.getLoggerName event)
+                            "logger.thread_name" (.getThreadName event)
+                            "message"            (.getFormattedMessage event))]
       (when (:include-logger-ctx opts)
-        (.put m "logger_context" (.getName (.getLoggerContextVO event))))
+        (.put m "logger.context_name" (.getName (.getLoggerContextVO event))))
       (when (:include-level-val opts)
         (.put m "level_value" (.toInt (.getLevel event))))
       (when (:include-mdc opts)
@@ -141,14 +141,16 @@
       (when (:include-markers opts)
         (when-let [^List markers (.getMarkerList event)]
           (when-not (.isEmpty markers)
+            ;; TODO: markers vs. tags?
             (.put m "markers" (mapv #(.getName ^Marker %) markers)))))
       (when-let [tp (and (:include-exception opts)
                          (.getThrowableProxy event))]
         (when-let [exd (and (:include-ex-data opts)
                             (instance? ThrowableProxy tp)
                             (ex-data (.getThrowable ^ThrowableProxy tp)))]
-          (.put m "ex-data" exd))
+          (.put m "error.data" exd))
         (when-let [ex-str (.convert ^ThrowableProxyConverter (:ex-converter opts) event)]
+          ;; TODO: split into Datadog error attributes.
           (.put m "exception" ex-str)))
       (let [s (j/write-value-as-string
                (reduce insert-kvp! m (.getKeyValuePairs event))

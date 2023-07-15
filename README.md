@@ -93,9 +93,9 @@ Example log output (with pretty printing enabled):
   "timestamp" : "2023-06-02T14:43:55.685557Z",
   "level" : "WARN",
   "level_value" : 30000,         // <includeLevelValue>true</includeLevelValue>
-  "logger_name" : "my.logger",
-  "logger_context" : "default",  // <includeLoggerContext>true</includeLoggerContext>
-  "thread_name" : "my.thread",
+  "logger.name" : "my.logger",
+  "logger.context_name" : "default",  // <includeLoggerContext>true</includeLoggerContext>
+  "logger.thread_name" : "my.thread",
   "message" : "My formatted message",
   "markers" : [ "my-marker" ],
   "mdc" : {                      // <includeMdc>true</includeMdc>
