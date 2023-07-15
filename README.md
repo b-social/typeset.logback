@@ -70,6 +70,7 @@ Use Typeset.logback and configure the various options:
                 <includeLoggerContext>false</includeLoggerContext>
                 <includeLevelValue>false</includeLevelValue>
                 <includeMdc>false</includeMdc>
+                <flattenMdc>false</flattenMdc>
                 <includeMarkers>true</includeMarkers>
                 <includeException>true</includeException>
                 <includeExData>true</includeExData>

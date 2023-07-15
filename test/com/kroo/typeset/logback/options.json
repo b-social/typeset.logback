@@ -14,8 +14,6 @@
   }, 3, 4 ],
   "thread_name" : "my.thread",
   "message" : "my formatted message",
-  "mdc" : {
-    "hello" : "world"
-  },
+  "hello" : "world",
   "timestamp" : "2023-06-05T22:45:00Z"
 }

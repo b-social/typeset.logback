@@ -6,7 +6,7 @@
            (ch.qos.logback.classic.spi ILoggingEvent ThrowableProxy)
            (ch.qos.logback.core CoreConstants)
            (java.time Instant)
-           (java.util HashMap List Map)
+           (java.util HashMap List Map Map$Entry)
            (org.slf4j Marker)
            (org.slf4j.event KeyValuePair))
   (:gen-class
@@ -23,6 +23,7 @@
              [setIncludeLoggerContext [Boolean] void]
              [setIncludeLevelValue [Boolean] void]
              [setIncludeMdc [Boolean] void]
+             [setFlattenMdc [Boolean] void]
              [setIncludeMarkers [Boolean] void]
              [setIncludeException [Boolean] void]
              [setIncludeExData [Boolean] void]]))
@@ -32,6 +33,7 @@
                            include-logger-ctx
                            include-level-val
                            include-mdc
+                           flatten-mdc
                            include-markers
                            include-exception
                            include-ex-data
@@ -52,18 +54,29 @@
                          :include-logger-ctx false
                          :include-level-val  false
                          :include-mdc        false
+                         :flatten-mdc        false
                          :include-markers    true
                          :include-exception  true
                          :include-ex-data    true
                          :ex-converter       (ThrowableProxyConverter.)})]
               (assoc opts :object-mapper (j/object-mapper opts))))])
 
-(defn- insert!
+(defn- insert-kvp!
   "Inserts a key value pair into a Java map.  If a key with the same name
-   already exists, prepends an \"@\" onto the key."
+   already exists, prepends \"@\"-symbols onto the key until it is unique."
   ^Map [^Map m ^KeyValuePair kv]
   (loop [^String k (.key kv)
          ^Object v (.value kv)]
+    (if (.putIfAbsent m k v)
+      (recur (str \@ k) v)
+      m)))
+
+(defn- insert-me!
+  "Inserts a map entry into a Java map.  If a key with the same name already
+  exists, prepends \"@\"-symbols onto the key until it is unique."
+  ^Map [^Map m ^Map$Entry me]
+  (loop [^String k (.getKey me)
+         ^Object v (.getValue me)]
     (if (.putIfAbsent m k v)
       (recur (str \@ k) v)
       m)))
@@ -122,7 +135,9 @@
       (when (:include-mdc opts)
         (when-let [^Map mdc (.getMDCPropertyMap event)]
           (when-not (.isEmpty mdc)
-            (.put m "mdc" mdc))))
+            (if (:flatten-mdc opts)
+              (reduce insert-me! m mdc)
+              (.put m "mdc" mdc)))))
       (when (:include-markers opts)
         (when-let [^List markers (.getMarkerList event)]
           (when-not (.isEmpty markers)
@@ -136,7 +151,7 @@
         (when-let [ex-str (.convert ^ThrowableProxyConverter (:ex-converter opts) event)]
           (.put m "exception" ex-str)))
       (let [s (j/write-value-as-string
-               (reduce insert! m (.getKeyValuePairs event))
+               (reduce insert-kvp! m (.getKeyValuePairs event))
                (:object-mapper opts))]
         (if (:append-newline opts)
           (str s CoreConstants/LINE_SEPARATOR)
@@ -197,6 +212,9 @@
 
 (defn -setIncludeMdc [this include-mdc]
   (set-opt! this include-mdc))
+
+(defn -setFlattenMdc [this flatten-mdc]
+  (set-opt! this flatten-mdc))
 
 (defn -setIncludeMarkers [this include-markers]
   (set-opt! this include-markers))
