@@ -2,7 +2,7 @@
   "Simple JSON layout component for Logback Classic, with Clojure and SLF4J 2+
    key value attribute support."
   (:require [jsonista.core :as j])
-  (:import (ch.qos.logback.classic.spi ILoggingEvent ThrowableProxy ThrowableProxyUtil)
+  (:import (ch.qos.logback.classic.spi ILoggingEvent IThrowableProxy ThrowableProxy ThrowableProxyUtil)
            (ch.qos.logback.core CoreConstants)
            (java.time Instant)
            (java.util HashMap List Map Map$Entry)
@@ -97,9 +97,9 @@
                      (if t
                        (recur (conj! acc (ex-data t)) (.getCause t))
                        (persistent! acc)))]
-         (if (every? nil? ex-datas)
-           nil
-           ex-datas))
+      (if (every? nil? ex-datas)
+        nil
+        ex-datas))
     (ex-data t)))
 
 (defn- log-typeset-error
@@ -156,8 +156,8 @@
           (when-not (.isEmpty markers)
             ;; TODO: markers vs. tags?
             (.put m "markers" (mapv #(.getName ^Marker %) markers)))))
-      (when-let [tp (and (:include-exception opts)
-                         (.getThrowableProxy event))]
+      (when-let [^IThrowableProxy tp (and (:include-exception opts)
+                                          (.getThrowableProxy event))]
         (when-let [exd (and (:include-ex-data opts)
                             (not (.isCyclic tp))
                             (instance? ThrowableProxy tp)
