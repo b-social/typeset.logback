@@ -2,8 +2,7 @@
   "Simple JSON layout component for Logback Classic, with Clojure and SLF4J 2+
    key value attribute support."
   (:require [jsonista.core :as j])
-  (:import (ch.qos.logback.classic.pattern ThrowableProxyConverter)
-           (ch.qos.logback.classic.spi ILoggingEvent ThrowableProxy)
+  (:import (ch.qos.logback.classic.spi ILoggingEvent ThrowableProxy ThrowableProxyUtil)
            (ch.qos.logback.core CoreConstants)
            (java.time Instant)
            (java.util HashMap List Map Map$Entry)
@@ -38,8 +37,7 @@
                            include-exception
                            include-ex-data
                            exception-as-str
-                           object-mapper
-                           ex-converter])
+                           object-mapper])
 
 (defn -init
   "Method invoked during object initialisation.  Sets the default value for the
@@ -56,9 +54,8 @@
                               :include-mdc        false
                               :flatten-mdc        false
                               :include-markers    true
-                              :include-exception  true
                               :include-ex-data    true
-                              :ex-converter       (ThrowableProxyConverter.)})]
+                              :include-exception  true})]
                    (assoc opts :object-mapper (j/object-mapper opts))))])
 
 (defn- insert-kvp!
@@ -149,9 +146,9 @@
                             (instance? ThrowableProxy tp)
                             (ex-data (.getThrowable ^ThrowableProxy tp)))]
           (.put m "error.data" exd))
-        (when-let [ex-str (.convert ^ThrowableProxyConverter (:ex-converter opts) event)]
-          ;; TODO: split into Datadog error attributes.
-          (.put m "exception" ex-str)))
+        (.put m "error.kind" (.getClassName tp))
+        (.put m "error.message" (.getMessage tp))
+        (.put m "error.stack" (ThrowableProxyUtil/asString tp)))
       (let [s (j/write-value-as-string
                (reduce insert-kvp! m (.getKeyValuePairs event))
                (:object-mapper opts))]
@@ -166,14 +163,10 @@
   "application/json")
 
 (defn -start [this]
-  ;; We have to call `.start` on "ThrowableProxyConverter" to make it
-  ;; include stack traces in logs.
-  (.start ^ThrowableProxyConverter (:ex-converter @(.state this)))
   (.superStart this))
 
 (defn -stop [this]
-  (.superStop this)
-  (.stop ^ThrowableProxyConverter (:ex-converter @(.state this))))
+  (.superStop this))
 
 ;;; -------------------------------------
 ;;; Expose Logback configuration options.
