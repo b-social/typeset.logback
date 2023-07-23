@@ -1,15 +1,18 @@
 {
-  "exception": "clojure.lang.ExceptionInfo: Some throwable\n\tat com.kroo.typeset.logback.JsonLayout_test$fn$reify__362.getThrowableProxy(JsonLayout_test.clj:20)\n\tat ch.qos.logback.classic.pattern.ThrowableProxyConverter.convert(ThrowableProxyConverter.java:114)\n\tat com.kroo.typeset.logback.JsonLayout$_doLayout.invokeStatic(JsonLayout.clj:100)\n\tat com.kroo.typeset.logback.JsonLayout$_doLayout.invoke(JsonLayout.clj:75)\n\tat com.kroo.typeset.logback.JsonLayout.doLayout(Unknown Source)\n\tat com.kroo.typeset.logback.JsonLayout_test$fn__365.invokeStatic(JsonLayout_test.clj:40)\n\tat com.kroo.typeset.logback.JsonLayout_test$fn__365.invoke(JsonLayout_test.clj:35)\n\tat clojure.test$test_var$fn__9856.invoke(test.clj:717)\n\tat clojure.test$test_var.invokeStatic(test.clj:717)\n\tat clojure.test$test_var.invoke(test.clj:708)\n\tat clojure.test$test_vars$fn__9882$fn__9887.invoke(test.clj:735)\n\tat clojure.test$default_fixture.invokeStatic(test.clj:687)\n\tat clojure.test$default_fixture.invoke(test.clj:683)\n\tat clojure.test$test_vars$fn__9882.invoke(test.clj:735)\n\tat clojure.test$default_fixture.invokeStatic(test.clj:687)\n\tat clojure.test$default_fixture.invoke(test.clj:683)\n\tat clojure.test$test_vars.invokeStatic(test.clj:731)\n\tat clojure.test$test_all_vars.invokeStatic(test.clj:737)\n\tat clojure.test$test_ns.invokeStatic(test.clj:758)\n\tat clojure.test$test_ns.invoke(test.clj:743)\n\tat user$eval231$fn__294.invoke(form-init2748884423732895886.clj:1)\n\tat clojure.lang.AFn.applyToHelper(AFn.java:156)\n\tat clojure.lang.AFn.applyTo(AFn.java:144)\n\tat clojure.core$apply.invokeStatic(core.clj:669)\n\tat leiningen.core.injected$compose_hooks$fn__158.doInvoke(form-init2748884423732895886.clj:1)\n\tat clojure.lang.RestFn.applyTo(RestFn.java:137)\n\tat clojure.core$apply.invokeStatic(core.clj:667)\n\tat leiningen.core.injected$run_hooks.invokeStatic(form-init2748884423732895886.clj:1)\n\tat leiningen.core.injected$prepare_for_hooks$fn__163$fn__164.doInvoke(form-init2748884423732895886.clj:1)\n\tat clojure.lang.RestFn.applyTo(RestFn.java:137)\n\tat clojure.lang.AFunction$1.doInvoke(AFunction.java:31)\n\tat clojure.lang.RestFn.invoke(RestFn.java:408)\n\tat clojure.core$map$fn__5935.invoke(core.clj:2772)\n\tat clojure.lang.LazySeq.sval(LazySeq.java:42)\n\tat clojure.lang.LazySeq.seq(LazySeq.java:51)\n\tat clojure.lang.Cons.next(Cons.java:39)\n\tat clojure.lang.RT.boundedLength(RT.java:1790)\n\tat clojure.lang.RestFn.applyTo(RestFn.java:130)\n\tat clojure.core$apply.invokeStatic(core.clj:669)\n\tat clojure.test$run_tests.invokeStatic(test.clj:768)\n\tat clojure.test$run_tests.doInvoke(test.clj:768)\n\tat clojure.lang.RestFn.applyTo(RestFn.java:137)\n\tat clojure.core$apply.invokeStatic(core.clj:667)\n\tat user$eval231$fn__304$fn__337.invoke(form-init2748884423732895886.clj:1)\n\tat user$eval231$fn__304$fn__305.invoke(form-init2748884423732895886.clj:1)\n\tat user$eval231$fn__304.invoke(form-init2748884423732895886.clj:1)\n\tat user$eval231.invokeStatic(form-init2748884423732895886.clj:1)\n\tat user$eval231.invoke(form-init2748884423732895886.clj:1)\n\tat clojure.lang.Compiler.eval(Compiler.java:7194)\n\tat clojure.lang.Compiler.eval(Compiler.java:7184)\n\tat clojure.lang.Compiler.load(Compiler.java:7653)\n\tat clojure.lang.Compiler.loadFile(Compiler.java:7591)\n\tat clojure.main$load_script.invokeStatic(main.clj:475)\n\tat clojure.main$init_opt.invokeStatic(main.clj:477)\n\tat clojure.main$init_opt.invoke(main.clj:477)\n\tat clojure.main$initialize.invokeStatic(main.clj:508)\n\tat clojure.main$null_opt.invokeStatic(main.clj:542)\n\tat clojure.main$null_opt.invoke(main.clj:539)\n\tat clojure.main$main.invokeStatic(main.clj:664)\n\tat clojure.main$main.doInvoke(main.clj:616)\n\tat clojure.lang.RestFn.applyTo(RestFn.java:137)\n\tat clojure.lang.Var.applyTo(Var.java:705)\n\tat clojure.main.main(main.java:40)\n",
-  "@timestamp": {
-    "foo": {
-      "bar": 12.4
-    }
-  },
-  "level": "WARN",
-  "logger.name": "my.logger",
+  "error.kind": "clojure.lang.ExceptionInfo",
+  "error.message": "Some throwable",
   "error.data": {
     "foo": 42
   },
+  "error.stack": "clojure.lang.ExceptionInfo: Some throwable\n\tat com.kroo.typeset.logback.JsonLayout_test$fn$reify__362.getThrowableProxy(JsonLayout_test.clj:20)\n\tat ch.qos.logback.classic.pattern.ThrowableProxyConverter.convert(ThrowableProxyConverter.java:114)\n\tat com.kroo.typeset.logback.JsonLayout$_doLayout.invokeStatic(JsonLayout.clj:100)\n\tat com.kroo.typeset.logback.JsonLayout$_doLayout.invoke(JsonLayout.clj:75)\n\tat com.kroo.typeset.logback.JsonLayout.doLayout(Unknown Source)\n\tat com.kroo.typeset.logback.JsonLayout_test$fn__365.invokeStatic(JsonLayout_test.clj:40)\n\tat com.kroo.typeset.logback.JsonLayout_test$fn__365.invoke(JsonLayout_test.clj:35)\n\tat clojure.test$test_var$fn__9856.invoke(test.clj:717)\n\tat clojure.test$test_var.invokeStatic(test.clj:717)\n\tat clojure.test$test_var.invoke(test.clj:708)\n\tat clojure.test$test_vars$fn__9882$fn__9887.invoke(test.clj:735)\n\tat clojure.test$default_fixture.invokeStatic(test.clj:687)\n\tat clojure.test$default_fixture.invoke(test.clj:683)\n\tat clojure.test$test_vars$fn__9882.invoke(test.clj:735)\n\tat clojure.test$default_fixture.invokeStatic(test.clj:687)\n\tat clojure.test$default_fixture.invoke(test.clj:683)\n\tat clojure.test$test_vars.invokeStatic(test.clj:731)\n\tat clojure.test$test_all_vars.invokeStatic(test.clj:737)\n\tat clojure.test$test_ns.invokeStatic(test.clj:758)\n\tat clojure.test$test_ns.invoke(test.clj:743)\n\tat user$eval231$fn__294.invoke(form-init2748884423732895886.clj:1)\n\tat clojure.lang.AFn.applyToHelper(AFn.java:156)\n\tat clojure.lang.AFn.applyTo(AFn.java:144)\n\tat clojure.core$apply.invokeStatic(core.clj:669)\n\tat leiningen.core.injected$compose_hooks$fn__158.doInvoke(form-init2748884423732895886.clj:1)\n\tat clojure.lang.RestFn.applyTo(RestFn.java:137)\n\tat clojure.core$apply.invokeStatic(core.clj:667)\n\tat leiningen.core.injected$run_hooks.invokeStatic(form-init2748884423732895886.clj:1)\n\tat leiningen.core.injected$prepare_for_hooks$fn__163$fn__164.doInvoke(form-init2748884423732895886.clj:1)\n\tat clojure.lang.RestFn.applyTo(RestFn.java:137)\n\tat clojure.lang.AFunction$1.doInvoke(AFunction.java:31)\n\tat clojure.lang.RestFn.invoke(RestFn.java:408)\n\tat clojure.core$map$fn__5935.invoke(core.clj:2772)\n\tat clojure.lang.LazySeq.sval(LazySeq.java:42)\n\tat clojure.lang.LazySeq.seq(LazySeq.java:51)\n\tat clojure.lang.Cons.next(Cons.java:39)\n\tat clojure.lang.RT.boundedLength(RT.java:1790)\n\tat clojure.lang.RestFn.applyTo(RestFn.java:130)\n\tat clojure.core$apply.invokeStatic(core.clj:669)\n\tat clojure.test$run_tests.invokeStatic(test.clj:768)\n\tat clojure.test$run_tests.doInvoke(test.clj:768)\n\tat clojure.lang.RestFn.applyTo(RestFn.java:137)\n\tat clojure.core$apply.invokeStatic(core.clj:667)\n\tat user$eval231$fn__304$fn__337.invoke(form-init2748884423732895886.clj:1)\n\tat user$eval231$fn__304$fn__305.invoke(form-init2748884423732895886.clj:1)\n\tat user$eval231$fn__304.invoke(form-init2748884423732895886.clj:1)\n\tat user$eval231.invokeStatic(form-init2748884423732895886.clj:1)\n\tat user$eval231.invoke(form-init2748884423732895886.clj:1)\n\tat clojure.lang.Compiler.eval(Compiler.java:7194)\n\tat clojure.lang.Compiler.eval(Compiler.java:7184)\n\tat clojure.lang.Compiler.load(Compiler.java:7653)\n\tat clojure.lang.Compiler.loadFile(Compiler.java:7591)\n\tat clojure.main$load_script.invokeStatic(main.clj:475)\n\tat clojure.main$init_opt.invokeStatic(main.clj:477)\n\tat clojure.main$init_opt.invoke(main.clj:477)\n\tat clojure.main$initialize.invokeStatic(main.clj:508)\n\tat clojure.main$null_opt.invokeStatic(main.clj:542)\n\tat clojure.main$null_opt.invoke(main.clj:539)\n\tat clojure.main$main.invokeStatic(main.clj:664)\n\tat clojure.main$main.doInvoke(main.clj:616)\n\tat clojure.lang.RestFn.applyTo(RestFn.java:137)\n\tat clojure.lang.Var.applyTo(Var.java:705)\n\tat clojure.main.main(main.java:40)\n",
+  "timestamp": "2023-06-05T22:45:00Z",
+  "level": "WARN",
+  "message": "my formatted message",
+  "logger.name": "my.logger",
+  "logger.thread_name": "my.thread",
+  "markers": [
+    "MyMarker"
+  ],
   "things": [
     1,
     {
@@ -20,10 +23,9 @@
     3,
     4
   ],
-  "logger.thread_name": "my.thread",
-  "message": "my formatted message",
-  "markers": [
-    "MyMarker"
-  ],
-  "timestamp": "2023-06-05T22:45:00Z"
+  "@timestamp": {
+    "foo": {
+      "bar": 12.4
+    }
+  }
 }

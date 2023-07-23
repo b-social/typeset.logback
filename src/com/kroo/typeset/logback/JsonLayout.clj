@@ -87,6 +87,21 @@
                    (map (fn [x] `(.put ~@x))))
              kvs)))
 
+(defn- extract-ex-data
+  "Given a throwable, returns a vector of all the ex-data values within that
+  throwable chain.  If the given throwable doesn't have a cause, returns the
+  ex-data for just that throwable (or `nil`)."
+  [^Throwable t]
+  (if (.getCause t)
+    (let [ex-datas (loop [acc (transient []), ^Throwable t t]
+                     (if t
+                       (recur (conj! acc (ex-data t)) (.getCause t))
+                       (persistent! acc)))]
+         (if (every? nil? ex-datas)
+           nil
+           ex-datas))
+    (ex-data t)))
+
 (defn- log-typeset-error
   "In the rare event that Typeset throws an exception while generating the log
    string, try to convert that exception into a log instead."
@@ -94,17 +109,18 @@
   (let [msg "com.kroo.typeset.logback.JsonLayout was unable to format log event!"]
     (try
       (str (j/write-value-as-string
-            {:timestamp   (Instant/now)
-             :message     msg
-             :level       "ERROR"
-             :logger.name "com.kroo.typeset.logback.JsonLayout"
-             :log_event   {:timestamp          (.toString (.getInstant event))
-                           :logger.name        (.getLoggerName event)
-                           :logger.thread_name (.getThreadName event)
-                           :message            (.getFormattedMessage event)
-                           :level              (.toString (.getLevel event))}
-             :ex_message  (str e)
-             :exception   (Throwable->map e)})
+            {"timestamp"     (Instant/now)
+             "message"       msg
+             "level"         "ERROR"
+             "logger.name"   "com.kroo.typeset.logback.JsonLayout"
+             "log_event"     {"timestamp"          (.toString (.getInstant event))
+                              "logger.name"        (.getLoggerName event)
+                              "logger.thread_name" (.getThreadName event)
+                              "message"            (.getFormattedMessage event)
+                              "level"              (.toString (.getLevel event))}
+             "error.message" (.getMessage e)
+             "error.kind"    (.getClass e)
+             "error.stack"   (ThrowableProxyUtil/asString (ThrowableProxy. e))})
            CoreConstants/LINE_SEPARATOR)
       ;; Another failover for when something is very seriously wrong!
       (catch Throwable _
@@ -143,8 +159,9 @@
       (when-let [tp (and (:include-exception opts)
                          (.getThrowableProxy event))]
         (when-let [exd (and (:include-ex-data opts)
+                            (not (.isCyclic tp))
                             (instance? ThrowableProxy tp)
-                            (ex-data (.getThrowable ^ThrowableProxy tp)))]
+                            (extract-ex-data (.getThrowable ^ThrowableProxy tp)))]
           (.put m "error.data" exd))
         (.put m "error.kind" (.getClassName tp))
         (.put m "error.message" (.getMessage tp))

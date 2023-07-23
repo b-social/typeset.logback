@@ -36,10 +36,10 @@
     ;; (spit (io/file (io/resource "com/kroo/typeset/logback/defaults.json"))
     ;;       (.doLayout typeset log-event))
     (testing "Returns expected log"
-      (is (= (dissoc expected "exception")
-             (dissoc actual "exception"))))
+      (is (= (dissoc expected "error.stack")
+             (dissoc actual "error.stack"))))
     (testing "Exception line contains the stack trace"
-      (is (str/starts-with? (actual "exception")
+      (is (str/starts-with? (actual "error.stack")
                             "clojure.lang.ExceptionInfo: Some throwable\n\tat com.kroo.typeset.logback.JsonLayout_test")))))
 
 (deftest typeset-options-test
@@ -88,13 +88,11 @@
     ;; (spit (io/file (io/resource "com/kroo/typeset/logback/error.json"))
     ;;       (.doLayout typeset bad-log-event))
     (testing "Returns failover log"
-      (is (= (dissoc expected "exception" "timestamp")
-             (dissoc actual "exception" "timestamp")))
+      (is (= (dissoc expected "error.stack" "timestamp")
+             (dissoc actual "error.stack" "timestamp")))
       (testing "Includes timestamp of exception"
         (is (contains? actual "timestamp")))
       (testing "Includes information about the exception"
-        (is (contains? actual "exception"))
-        (is (map? (actual "exception")))
-        (is (seq (actual "exception")))
-        (is (= (-> bad-log-event-exception Throwable->map j/write-value-as-string j/read-value)
-               (actual "exception")))))))
+        (is (contains? actual "error.stack"))
+        (is (str/starts-with? (actual "error.stack")
+                              "clojure.lang.ExceptionInfo: Hello\n"))))))

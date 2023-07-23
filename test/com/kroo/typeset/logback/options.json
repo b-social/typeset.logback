@@ -1,19 +1,19 @@
 {
-  "@timestamp" : {
-    "foo" : {
-      "bar" : 12.4
-    }
-  },
+  "timestamp" : "2023-06-05T22:45:00Z",
   "level" : "WARN",
   "level_value" : 30000,
   "logger.name" : "my.logger",
+  "logger.thread_name" : "my.thread",
+  "message" : "my formatted message",
+  "hello" : "world",
   "things" : [ 1, {
     "hi" : {
       "there" : 2
     }
   }, 3, 4 ],
-  "logger.thread_name" : "my.thread",
-  "message" : "my formatted message",
-  "hello" : "world",
-  "timestamp" : "2023-06-05T22:45:00Z"
+  "@timestamp" : {
+    "foo" : {
+      "bar" : 12.4
+    }
+  }
 }
