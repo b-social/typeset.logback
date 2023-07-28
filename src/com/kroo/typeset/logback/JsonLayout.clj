@@ -1,6 +1,6 @@
 (ns com.kroo.typeset.logback.JsonLayout
   "Simple JSON layout component for Logback Classic, with Clojure and SLF4J 2+
-   key value attribute support."
+  key value attribute support."
   (:require [jsonista.core :as j])
   (:import (ch.qos.logback.classic.spi ILoggingEvent IThrowableProxy ThrowableProxy ThrowableProxyUtil)
            (ch.qos.logback.core CoreConstants)
@@ -60,7 +60,7 @@
 
 (defn- insert-kvp!
   "Inserts a key value pair into a Java map.  If a key with the same name
-   already exists, prepends \"@\"-symbols onto the key until it is unique."
+  already exists, prepends \"@\"-symbols onto the key until it is unique."
   ^Map [^Map m ^KeyValuePair kv]
   (loop [^String k (.key kv)
          ^Object v (.value kv)]
@@ -104,7 +104,7 @@
 
 (defn- log-typeset-error
   "In the rare event that Typeset throws an exception while generating the log
-   string, try to convert that exception into a log instead."
+  string, try to convert that exception into a log instead."
   [^ILoggingEvent event ^Throwable e]
   (let [msg "com.kroo.typeset.logback.JsonLayout was unable to format log event!"]
     (try
@@ -132,7 +132,7 @@
 
 (defn -doLayout
   "The core method on a Logback layout component.  This method takes a logging
-   event and returns that log formatted as a JSON string."
+  event and returns that log formatted as a JSON string."
   ^String [this ^ILoggingEvent event]
   (try
     (let [^JsonLayoutOpts opts @(.state this)
