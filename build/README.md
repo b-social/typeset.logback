@@ -1,4 +1,12 @@
-# Building/deploying JARs
+# Common development actions
+
+## Lint/format/etc.
+
+```shell
+clojure -M:lint           # Lint
+clojure -T:cljfmt fix     # Fix formatting
+clojure -T:antq outdated  # List outdated deps
+```
 
 ## Test
 
