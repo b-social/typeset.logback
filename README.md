@@ -69,8 +69,8 @@ Use Typeset.logback and configure the various options:
                 <appendLineSeparator>true</appendLineSeparator>
                 <includeLoggerContext>false</includeLoggerContext>
                 <includeLevelValue>false</includeLevelValue>
-                <includeMdc>false</includeMdc>
-                <flattenMdc>false</flattenMdc>
+                <includeMdc>true</includeMdc>
+                <flattenMdc>true</flattenMdc>
                 <includeMarkers>true</includeMarkers>
                 <includeException>true</includeException>
                 <includeExData>true</includeExData>

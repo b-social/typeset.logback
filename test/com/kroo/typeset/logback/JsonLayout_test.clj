@@ -48,7 +48,7 @@
                   (.setIncludeLoggerContext true)
                   (.setIncludeLevelValue true)
                   (.setIncludeMdc true)
-                  (.setFlattenMdc true)
+                  (.setFlattenMdc false)
                   (.setIncludeMarkers false)
                   (.setIncludeException false)
                   (.start))

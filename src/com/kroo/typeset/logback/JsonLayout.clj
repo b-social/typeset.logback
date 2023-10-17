@@ -51,8 +51,8 @@
                               :append-newline     true
                               :include-logger-ctx false
                               :include-level-val  false
-                              :include-mdc        false
-                              :flatten-mdc        false
+                              :include-mdc        true
+                              :flatten-mdc        true
                               :include-markers    true
                               :include-ex-data    true
                               :include-exception  true})]

@@ -5,7 +5,9 @@
   "logger.name" : "my.logger",
   "logger.thread_name" : "my.thread",
   "message" : "my formatted message",
-  "hello" : "world",
+  "mdc": {
+    "hello" : "world"
+  },
   "things" : [ 1, {
     "hi" : {
       "there" : 2
