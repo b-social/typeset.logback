@@ -7,7 +7,8 @@
            (java.time Instant)
            (java.util HashMap List Map Map$Entry)
            (org.slf4j Marker)
-           (org.slf4j.event KeyValuePair))
+           (org.slf4j.event KeyValuePair)
+           (com.fasterxml.jackson.databind ObjectMapper SerializationFeature))
   (:gen-class
    :extends ch.qos.logback.core.LayoutBase
    :main    false
@@ -40,6 +41,13 @@
                            exception-as-str
                            object-mapper])
 
+(defn- new-object-mapper
+  ^ObjectMapper [opts]
+  (-> (j/object-mapper opts)
+      (.disable SerializationFeature/FAIL_ON_EMPTY_BEANS)
+      (.disable SerializationFeature/FAIL_ON_UNWRAPPED_TYPE_IDENTIFIERS)
+      (.enable SerializationFeature/WRITE_SELF_REFERENCES_AS_NULL)))
+
 (defn -init
   "Method invoked during object initialisation.  Sets the default value for the
   \"state\" field."
@@ -58,7 +66,7 @@
                               :include-markers    true
                               :include-ex-data    true
                               :include-exception  true})]
-                   (assoc opts :object-mapper (j/object-mapper opts))))])
+                   (assoc opts :object-mapper (new-object-mapper opts))))])
 
 (defn- insert-kvp!
   "Inserts a key value pair into a Java map.  If a key with the same name
@@ -197,7 +205,7 @@
   "Update an option in the option map and builds a new Jackson ObjectMapper."
   ^JsonLayoutOpts [opts k v]
   (let [opts (assoc opts k v)]
-    (assoc opts :object-mapper (j/object-mapper opts))))
+    (assoc opts :object-mapper (new-object-mapper opts))))
 
 (defn -setPrettyPrint [this pretty-print?]
   (vswap! (.state this) update-opt+mapper
