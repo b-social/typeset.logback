@@ -18,6 +18,7 @@
              [setRemoveNullKeyValuePairs [Boolean] void]
              [setTimestampFormat [String] void]
              [setEscapeNonAsciiCharacters [Boolean] void]
+             [setSortKeysLexicographically [Boolean] void]
              [setAppendLineSeparator [Boolean] void]
              [setIncludeLoggerContext [Boolean] void]
              [setIncludeLevelValue [Boolean] void]
@@ -48,6 +49,7 @@
                               :strip-nils         true
                               :date-format        "yyyy-MM-dd'T'HH:mm:ss'Z'"
                               :escape-non-ascii   false
+                              :order-by-keys      false
                               :append-newline     true
                               :include-logger-ctx false
                               :include-level-val  false
@@ -212,6 +214,10 @@
 (defn -setEscapeNonAsciiCharacters [this escape-non-ascii?]
   (vswap! (.state this) update-opt+mapper
           :escape-non-ascii escape-non-ascii?))
+
+(defn -setSortKeysLexicographically [this sort-keys?]
+  (vswap! (.state this) update-opt+mapper
+          :order-by-keys sort-keys?))
 
 (defn -setAppendLineSeparator [this append-newline]
   (set-opt! this append-newline))

@@ -66,6 +66,7 @@ Use Typeset.logback and configure the various options:
                 <removeNullKeyValuePairs>true</removeNullKeyValuePairs>
                 <timestampFormat>yyyy-MM-dd'T'HH:mm:ss.SSS'Z'</timestampFormat>
                 <escapeNonAsciiCharacters>false</escapeNonAsciiCharacters>
+                <sortKeysLexicographically>false</sortKeysLexicographically>
                 <appendLineSeparator>true</appendLineSeparator>
                 <includeLoggerContext>false</includeLoggerContext>
                 <includeLevelValue>false</includeLevelValue>
