@@ -8,7 +8,7 @@
            (java.util HashMap List Map Map$Entry)
            (org.slf4j Marker)
            (org.slf4j.event KeyValuePair)
-           (com.fasterxml.jackson.databind ObjectMapper SerializationFeature))
+           (com.fasterxml.jackson.databind MapperFeature ObjectMapper SerializationFeature))
   (:gen-class
    :extends ch.qos.logback.core.LayoutBase
    :main    false
@@ -46,7 +46,13 @@
   (-> (j/object-mapper opts)
       (.disable SerializationFeature/FAIL_ON_EMPTY_BEANS)
       (.disable SerializationFeature/FAIL_ON_UNWRAPPED_TYPE_IDENTIFIERS)
-      (.enable SerializationFeature/WRITE_SELF_REFERENCES_AS_NULL)))
+      (.enable SerializationFeature/WRITE_SELF_REFERENCES_AS_NULL)
+      (.enable SerializationFeature/WRITE_ENUMS_USING_TO_STRING)
+      (.configure MapperFeature/CAN_OVERRIDE_ACCESS_MODIFIERS false)
+      (.configure MapperFeature/OVERRIDE_PUBLIC_ACCESS_MODIFIERS false)
+      (.configure MapperFeature/AUTO_DETECT_GETTERS false)
+      (.configure MapperFeature/AUTO_DETECT_SETTERS false)
+      (.configure MapperFeature/AUTO_DETECT_FIELDS false)))
 
 (defn -init
   "Method invoked during object initialisation.  Sets the default value for the
