@@ -13,23 +13,14 @@ Simple JSON layout component for [Logback][] Classic, with Clojure and [SLF4J][]
 ```clojure
 ;; tools.deps
 com.kroo/typeset.logback {:mvn/version "0.3"}
-ch.qos.logback/logback-classic {:mvn/version "1.4.8"}
 
 ;; Leiningen
 [com.kroo/typeset.logback "0.3"]
-[ch.qos.logback/logback-classic "1.4.8"]
 ```
 
 > **Note**<br>
-> Make sure to include `ch.qos.logback/logback-classic` as a dependency in your
-> project.
-
-> **Note**<br>
 > While this library is designed for and written in Clojure, it still works in
-> other JVM languages.  To use it, include [`org.clojure/clojure`][clj:mvn] as
-> a dependency and add [Clojars](https://clojars.org/) as a Maven repository.
-
-[clj:mvn]: https://central.sonatype.com/artifact/org.clojure/clojure/1.11.1/overview
+> other JVM languages.  To use it, add [Clojars](https://clojars.org/) as a Maven repository.
 
 
 ## Usage
