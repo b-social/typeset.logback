@@ -1,6 +1,6 @@
 {:paths ["src" "target/classes"]
- :deps {org.clojure/clojure {:mvn/version "1.11.1", :mvn/scope "provided"}
-        ch.qos.logback/logback-classic {:mvn/version "1.4.8", :mvn/scope "provided"}
+ :deps {org.clojure/clojure {:mvn/version "1.11.1"}
+        ch.qos.logback/logback-classic {:mvn/version "1.4.8"}
         metosin/jsonista {:mvn/version "0.3.8"}}
  :deps/prep-lib {:alias :build
                  :fn compile
