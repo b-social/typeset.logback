@@ -1,6 +1,6 @@
 {:paths ["src" "target/classes"]
  :deps {org.clojure/clojure {:mvn/version "1.11.1"}
-        ch.qos.logback/logback-classic {:mvn/version "1.4.8"}
+        ch.qos.logback/logback-classic {:mvn/version "1.4.11"}
         metosin/jsonista {:mvn/version "0.3.8"}}
  :deps/prep-lib {:alias :build
                  :fn compile
@@ -8,19 +8,19 @@
  :aliases
  {;; clj -X:test
   :test  {:extra-paths ["test"]
-          :extra-deps {lambdaisland/kaocha {:mvn/version "1.85.1342"}}
+          :extra-deps {lambdaisland/kaocha {:mvn/version "1.87.1366"}}
           :exec-fn kaocha.runner/exec-fn}
   ;; clj -T:build ...
   :build {:extra-paths ["build"]
           :deps {io.github.clojure/tools.build
-                 {:git/tag "v0.9.4", :git/sha "76b78fe"}
-                 slipset/deps-deploy {:mvn/version "0.2.1"}}
+                 {:git/tag "v0.9.6", :git/sha "8e78bcc"}
+                 slipset/deps-deploy {:mvn/version "0.2.2"}}
           :ns-default build}
   ;; clj -M:lint
   :lint {:replace-deps {clj-kondo/clj-kondo {:mvn/version "RELEASE"}}
          :main-opts    ["-m" "clj-kondo.main" "--parallel" "--lint" "src" "test"]}
   ;; clj -T:cljfmt fix
-  :cljfmt {:deps {io.github.weavejester/cljfmt {:git/tag "0.11.1", :git/sha "0882f99"}}
+  :cljfmt {:deps {io.github.weavejester/cljfmt {:git/tag "0.11.2", :git/sha "fb26b22"}}
            :ns-default cljfmt.tool}
   ;; clj -T:antq outdated
   :antq {:deps {com.github.liquidz/antq {:mvn/version "RELEASE"}
