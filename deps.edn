@@ -1,6 +1,6 @@
 {:paths ["src" "target/classes"]
- :deps {org.clojure/clojure {:mvn/version "1.11.1"}
-        ch.qos.logback/logback-classic {:mvn/version "1.4.14"}
+ :deps {org.clojure/clojure {:mvn/version "1.11.2"}
+        ch.qos.logback/logback-classic {:mvn/version "1.5.3"}
         metosin/jsonista {:mvn/version "0.3.8"}}
  :deps/prep-lib {:alias :build
                  :fn compile
@@ -13,7 +13,7 @@
   ;; clj -T:build ...
   :build {:extra-paths ["build"]
           :deps {io.github.clojure/tools.build
-                 {:git/tag "v0.9.6", :git/sha "8e78bcc"}
+                 {:git/tag "v0.10.0", :git/sha "3a2c484"}
                  slipset/deps-deploy {:mvn/version "0.2.2"}}
           :ns-default build}
   ;; clj -M:lint
