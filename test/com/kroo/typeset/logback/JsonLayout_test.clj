@@ -2,7 +2,8 @@
   (:require [clojure.test :refer :all]
             [clojure.string :as str]
             [clojure.java.io :as io]
-            [jsonista.core :as j])
+            [jsonista.core :as j]
+            [clj-time.core :as time])
   (:import (com.kroo.typeset.logback JsonLayout)
            (ch.qos.logback.classic.spi ILoggingEvent LoggerContextVO ThrowableProxy)
            (ch.qos.logback.classic Level LoggerContext)
@@ -10,10 +11,8 @@
            (org.slf4j MarkerFactory)
            (java.time Instant)))
 
-(def log-event
-  (let [mdc {"hello" "world"}
-        kvs [(KeyValuePair. "timestamp" {:foo {:bar 12.4}})
-             (KeyValuePair. "things" [1 {:hi {"there" 2}} 3 4])]]
+(defn log-event-builder [kvs]
+  (let [mdc {"hello" "world"}]
     (reify ILoggingEvent
       (getInstant [_this] (Instant/parse "2023-06-05T22:45:00.0000Z"))
       (getLevel [_this] Level/WARN)
@@ -27,6 +26,16 @@
         (ThrowableProxy. (ex-info "Some throwable" {:foo 42})))
       (getLoggerContextVO [_this]
         (LoggerContextVO. (LoggerContext.))))))
+
+(def log-event
+  (log-event-builder
+   [(KeyValuePair. "timestamp" {:foo {:bar 12.4}})
+    (KeyValuePair. "things" [1 {:hi {"there" 2}} 3 4])]))
+
+(def log-event-with-joda
+  (log-event-builder
+   [(KeyValuePair. "timestamp" (time/now))
+    (KeyValuePair. "things" [1 {:hi {"there" 2}} 3 4])]))
 
 (deftest typeset-defaults-test
   (let [typeset (doto (JsonLayout.)
@@ -58,6 +67,23 @@
     ;;       (.doLayout typeset log-event))
     (testing "Returns expected log"
       (is (= expected actual)))))
+
+(deftest typeset-jackson-modules-option-test
+  (let [typeset (doto (JsonLayout.)
+                  (.setJacksonModules "
+com.fasterxml.jackson.datatype.jsr310.JavaTimeModule ,
+com.fasterxml.jackson.datatype.joda.JodaModule  ")
+                  (.start))
+        expected (j/read-value (io/resource "com/kroo/typeset/logback/defaults.json"))
+        actual   (j/read-value (.doLayout typeset log-event-with-joda))]
+    ;; the main thing is this doesn't throw, which it will without setJacksonModules above
+    (testing "Returns expected log"
+      (is (= (dissoc expected "error.stack" "@timestamp")
+             (dissoc actual "error.stack" "@timestamp"))))
+    (testing "Exception line contains the stack trace"
+      (is (str/starts-with? (actual "error.stack")
+                            "clojure.lang.ExceptionInfo: Some throwable\n\tat com.kroo.typeset.logback.JsonLayout_test")))))
+
 
 (def bad-log-event-exception
   (ex-info "Hello" {:something "went wrong!"}))

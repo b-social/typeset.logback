@@ -1,7 +1,8 @@
 (ns com.kroo.typeset.logback.JsonLayout
   "Simple JSON layout component for Logback Classic, with Clojure and SLF4J 2+
   key value attribute support."
-  (:require [jsonista.core :as j])
+  (:require [jsonista.core :as j]
+            [clojure.string :as str])
   (:import (ch.qos.logback.classic.spi ILoggingEvent IThrowableProxy ThrowableProxy ThrowableProxyUtil)
            (ch.qos.logback.core CoreConstants)
            (java.time Instant)
@@ -27,7 +28,8 @@
              [setFlattenMdc [Boolean] void]
              [setIncludeMarkers [Boolean] void]
              [setIncludeException [Boolean] void]
-             [setIncludeExData [Boolean] void]]))
+             [setIncludeExData [Boolean] void]
+             [setJacksonModules [String] void]]))
 
 ;; Record providing fast access to JsonLayout options in lieu of fields.
 (defrecord JsonLayoutOpts [append-newline
@@ -39,11 +41,20 @@
                            include-exception
                            include-ex-data
                            exception-as-str
+                           jackson-modules
                            object-mapper])
+
+(defn- reify-jackson-module [module]
+  (clojure.lang.Reflector/invokeConstructor
+   (-> module symbol resolve)
+   (to-array [])))
+
+(defn- reify-jackson-modules [modules]
+  (mapv reify-jackson-module (remove str/blank? (str/split modules #"[,\s]+"))))
 
 (defn- new-object-mapper
   ^ObjectMapper [opts]
-  (-> (j/object-mapper opts)
+  (-> (j/object-mapper (assoc opts :modules (reify-jackson-modules (:jackson-modules opts))))
       (.disable SerializationFeature/FAIL_ON_EMPTY_BEANS)
       (.disable SerializationFeature/FAIL_ON_UNWRAPPED_TYPE_IDENTIFIERS)
       (.enable SerializationFeature/WRITE_SELF_REFERENCES_AS_NULL)
@@ -71,7 +82,8 @@
                               :flatten-mdc        true
                               :include-markers    true
                               :include-ex-data    true
-                              :include-exception  true})]
+                              :include-exception  true
+                              :jackson-modules    ""})]
                    (assoc opts :object-mapper (new-object-mapper opts))))])
 
 (defn- insert-kvp!
@@ -232,6 +244,10 @@
 (defn -setSortKeysLexicographically [this sort-keys?]
   (vswap! (.state this) update-opt+mapper
           :order-by-keys sort-keys?))
+
+(defn -setJacksonModules [this modules]
+  (vswap! (.state this) update-opt+mapper
+          :jackson-modules modules))
 
 (defn -setAppendLineSeparator [this append-newline]
   (set-opt! this append-newline))

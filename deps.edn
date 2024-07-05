@@ -8,7 +8,10 @@
  :aliases
  {;; clj -X:test
   :test  {:extra-paths ["test"]
-          :extra-deps {lambdaisland/kaocha {:mvn/version "1.87.1366"}}
+          :extra-deps {lambdaisland/kaocha {:mvn/version "1.87.1366"}
+                       clj-time/clj-time {:mvn/version "0.15.2"}
+                       com.fasterxml.jackson.datatype/jackson-datatype-jsr310 {:mvn/version "2.15.2"}
+                       com.fasterxml.jackson.datatype/jackson-datatype-joda {:mvn/version "2.15.2"}}
           :exec-fn kaocha.runner/exec-fn}
   ;; clj -T:build ...
   :build {:extra-paths ["build"]
