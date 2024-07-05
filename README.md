@@ -65,7 +65,12 @@ Use Typeset.logback and configure the various options:
                 <flattenMdc>true</flattenMdc>
                 <includeMarkers>true</includeMarkers>
                 <includeException>true</includeException>
-                <includeExData>true</includeExData>
+                <includeExData>true</
+                <!-- This is an example of how to add modules to the jackson object mapper -->
+                <jacksonModules>
+                    com.fasterxml.jackson.datatype.joda.JodaModule,
+                    com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
+                </jacksonModules>"
             </layout>
         </encoder>
     </appender>
