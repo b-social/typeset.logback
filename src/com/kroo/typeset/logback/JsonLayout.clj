@@ -41,7 +41,7 @@
                            include-exception
                            include-ex-data
                            exception-as-str
-                           jackson-modules
+                           modules
                            object-mapper])
 
 (defn- reify-jackson-module [module]
@@ -50,11 +50,15 @@
    (to-array [])))
 
 (defn- reify-jackson-modules [modules]
-  (mapv reify-jackson-module (remove str/blank? (str/split modules #"[,\s]+"))))
+  (into []
+	(comp
+	 (remove str/blank?)
+	 (map reify-jackson-module))
+	(str/split modules #"[,\s]+")))
 
 (defn- new-object-mapper
   ^ObjectMapper [opts]
-  (-> (j/object-mapper (assoc opts :modules (reify-jackson-modules (:jackson-modules opts))))
+  (-> (j/object-mapper opts)
       (.disable SerializationFeature/FAIL_ON_EMPTY_BEANS)
       (.disable SerializationFeature/FAIL_ON_UNWRAPPED_TYPE_IDENTIFIERS)
       (.enable SerializationFeature/WRITE_SELF_REFERENCES_AS_NULL)
@@ -83,7 +87,7 @@
                               :include-markers    true
                               :include-ex-data    true
                               :include-exception  true
-                              :jackson-modules    ""})]
+                              :modules            []})]
                    (assoc opts :object-mapper (new-object-mapper opts))))])
 
 (defn- insert-kvp!
@@ -247,7 +251,7 @@
 
 (defn -setJacksonModules [this modules]
   (vswap! (.state this) update-opt+mapper
-          :jackson-modules modules))
+          :modules (reify-jackson-modules modules)))
 
 (defn -setAppendLineSeparator [this append-newline]
   (set-opt! this append-newline))
