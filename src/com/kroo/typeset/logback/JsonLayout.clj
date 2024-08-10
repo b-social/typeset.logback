@@ -5,6 +5,7 @@
             [clojure.string :as str])
   (:import (ch.qos.logback.classic.spi ILoggingEvent IThrowableProxy ThrowableProxy ThrowableProxyUtil)
            (ch.qos.logback.core CoreConstants)
+           (clojure.lang Reflector)
            (java.time Instant)
            (java.util HashMap List Map Map$Entry)
            (org.slf4j Marker)
@@ -41,14 +42,11 @@
                            include-markers
                            include-exception
                            include-ex-data
-                           exception-as-str
                            modules
                            object-mapper])
 
 (defn- reify-jackson-module [module]
-  (clojure.lang.Reflector/invokeConstructor
-   (-> module symbol resolve)
-   (to-array [])))
+  (Reflector/invokeConstructor (-> module symbol resolve) (to-array [])))
 
 (defn- reify-jackson-modules [modules]
   (into []
@@ -228,7 +226,7 @@
   (let [opts (assoc opts k v)]
     (assoc opts :object-mapper (new-object-mapper opts))))
 
-(defmacro ^:private defopt-mapper [method-name key]
+(defmacro ^:private defopt-json [method-name key]
   `(defn ~method-name [this# value#]
      (vswap! (.state this#) update-opt+mapper ~key value#)))
 
@@ -236,12 +234,12 @@
   `(defn ~method-name [this# value#]
      (vswap! (.state this#) assoc ~key value#)))
 
-(defopt-mapper -setPrettyPrint :pretty)
-(defopt-mapper -setRemoveNullKeyValuePairs :strip-nils)
-(defopt-mapper -setRemoveEmptyKeyValuePairs :strip-empties)
-(defopt-mapper -setTimestampFormat :date-format)
-(defopt-mapper -setEscapeNonAsciiCharacters :escape-non-ascii)
-(defopt-mapper -setSortKeysLexicographically :order-by-keys)
+(defopt-json -setPrettyPrint :pretty)
+(defopt-json -setRemoveNullKeyValuePairs :strip-nils)
+(defopt-json -setRemoveEmptyKeyValuePairs :strip-empties)
+(defopt-json -setTimestampFormat :date-format)
+(defopt-json -setEscapeNonAsciiCharacters :escape-non-ascii)
+(defopt-json -setSortKeysLexicographically :order-by-keys)
 
 (defn -setJacksonModules [this modules]
   (vswap! (.state this) update-opt+mapper
