@@ -18,6 +18,7 @@
    :exposes-methods {start superStart, stop superStop}
    :methods [[setPrettyPrint [Boolean] void]
              [setRemoveNullKeyValuePairs [Boolean] void]
+             [setRemoveEmptyKeyValuePairs [Boolean] void]
              [setTimestampFormat [String] void]
              [setEscapeNonAsciiCharacters [Boolean] void]
              [setSortKeysLexicographically [Boolean] void]
@@ -76,6 +77,7 @@
   [[] (volatile! (let [opts (map->JsonLayoutOpts
                              {:pretty             false
                               :strip-nils         true
+                              :strip-empties      false
                               :date-format        "yyyy-MM-dd'T'HH:mm:ss'Z'"
                               :escape-non-ascii   false
                               :order-by-keys      false
@@ -220,59 +222,36 @@
 ;;; -------------------------------------
 ;;; Expose Logback configuration options.
 
-(defmacro ^:private set-opt! [this opt]
-  `(vswap! (.state ~this) assoc ~(keyword opt) ~opt))
-
 (defn- update-opt+mapper
   "Update an option in the option map and builds a new Jackson ObjectMapper."
   ^JsonLayoutOpts [opts k v]
   (let [opts (assoc opts k v)]
     (assoc opts :object-mapper (new-object-mapper opts))))
 
-(defn -setPrettyPrint [this pretty-print?]
-  (vswap! (.state this) update-opt+mapper
-          :pretty pretty-print?))
+(defmacro ^:private defopt-mapper [method-name key]
+  `(defn ~method-name [this# value#]
+     (vswap! (.state this#) update-opt+mapper ~key value#)))
 
-(defn -setRemoveNullKeyValuePairs [this remove-nil-kvs?]
-  (vswap! (.state this) update-opt+mapper
-          :strip-nils remove-nil-kvs?))
+(defmacro ^:private defopt [method-name key]
+  `(defn ~method-name [this# value#]
+     (vswap! (.state this#) assoc ~key value#)))
 
-(defn -setTimestampFormat [this timestamp-format]
-  (vswap! (.state this) update-opt+mapper
-          :date-format timestamp-format))
-
-(defn -setEscapeNonAsciiCharacters [this escape-non-ascii?]
-  (vswap! (.state this) update-opt+mapper
-          :escape-non-ascii escape-non-ascii?))
-
-(defn -setSortKeysLexicographically [this sort-keys?]
-  (vswap! (.state this) update-opt+mapper
-          :order-by-keys sort-keys?))
+(defopt-mapper -setPrettyPrint :pretty)
+(defopt-mapper -setRemoveNullKeyValuePairs :strip-nils)
+(defopt-mapper -setRemoveEmptyKeyValuePairs :strip-empties)
+(defopt-mapper -setTimestampFormat :date-format)
+(defopt-mapper -setEscapeNonAsciiCharacters :escape-non-ascii)
+(defopt-mapper -setSortKeysLexicographically :order-by-keys)
 
 (defn -setJacksonModules [this modules]
   (vswap! (.state this) update-opt+mapper
           :modules (reify-jackson-modules modules)))
 
-(defn -setAppendLineSeparator [this append-newline]
-  (set-opt! this append-newline))
-
-(defn -setIncludeLoggerContext [this include-logger-ctx]
-  (set-opt! this include-logger-ctx))
-
-(defn -setIncludeLevelValue [this include-level-val]
-  (set-opt! this include-level-val))
-
-(defn -setIncludeMdc [this include-mdc]
-  (set-opt! this include-mdc))
-
-(defn -setFlattenMdc [this flatten-mdc]
-  (set-opt! this flatten-mdc))
-
-(defn -setIncludeMarkers [this include-markers]
-  (set-opt! this include-markers))
-
-(defn -setIncludeException [this include-exception]
-  (set-opt! this include-exception))
-
-(defn -setIncludeExData [this include-ex-data]
-  (set-opt! this include-ex-data))
+(defopt -setAppendLineSeparator :append-newline)
+(defopt -setIncludeLoggerContext :include-logger-ctx)
+(defopt -setIncludeLevelValue :include-level-val)
+(defopt -setIncludeMdc :include-mdc)
+(defopt -setFlattenMdc :flatten-mdc)
+(defopt -setIncludeMarkers :include-markers)
+(defopt -setIncludeException :include-exception)
+(defopt -setIncludeExData :include-ex-data)

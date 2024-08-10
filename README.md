@@ -55,6 +55,7 @@ Use Typeset.logback and configure the various options:
                 <!-- The following are the default values. -->
                 <prettyPrint>false</prettyPrint>
                 <removeNullKeyValuePairs>true</removeNullKeyValuePairs>
+                <removeEmptyKeyValuePairs>false</removeEmptyKeyValuePairs>
                 <timestampFormat>yyyy-MM-dd'T'HH:mm:ss.SSS'Z'</timestampFormat>
                 <escapeNonAsciiCharacters>false</escapeNonAsciiCharacters>
                 <sortKeysLexicographically>false</sortKeysLexicographically>
