@@ -46,7 +46,7 @@
                            object-mapper])
 
 (defn- reify-jackson-module [module]
-  (Reflector/invokeConstructor (-> module symbol resolve) (to-array [])))
+  (Reflector/invokeConstructor (resolve (symbol module)) (to-array [])))
 
 (defn- reify-jackson-modules [modules]
   (into []
@@ -91,8 +91,8 @@
                    (assoc opts :object-mapper (new-object-mapper opts))))])
 
 (defn- insert-kvp!
-  "Inserts a key value pair into a Java map.  If a key with the same name
-  already exists, prepends \"@\"-symbols onto the key until it is unique."
+  "Inserts an SLF4J `KeyValuePair` into a Java map.  If a key with the same
+  name already exists, prepends \"@\"-symbols onto the key until it is unique."
   ^Map [^Map m ^KeyValuePair kv]
   (loop [^String k (.key kv)
          ^Object v (.value kv)]
@@ -129,8 +129,7 @@
                      (if t
                        (recur (conj! acc (ex-data t)) (.getCause t))
                        (persistent! acc)))]
-      (if (every? nil? ex-datas)
-        nil
+      (when-not (every? nil? ex-datas)
         ex-datas))
     (ex-data t)))
 
@@ -154,7 +153,7 @@
              "error.kind"    (.getClass e)
              "error.stack"   (ThrowableProxyUtil/asString (ThrowableProxy. e))})
            CoreConstants/LINE_SEPARATOR)
-      ;; Another failover for when something is very seriously wrong!
+      ;; A second failover for when something is *very* seriously wrong!
       (catch Throwable _
         (format "{\"timestamp\":\"%s\"\"message\":%s,\"exception\":%s,\"level\":\"ERROR\",\"logger.name\":\"%s\"}\n"
                 (Instant/now)
@@ -186,7 +185,6 @@
       (when (:include-markers opts)
         (when-let [^List markers (.getMarkerList event)]
           (when-not (.isEmpty markers)
-            ;; TODO: markers vs. tags?
             (.put m "markers" (mapv #(.getName ^Marker %) markers)))))
       (when-let [^IThrowableProxy tp (and (:include-exception opts)
                                           (.getThrowableProxy event))]
