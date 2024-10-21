@@ -27,7 +27,6 @@
                   :class-dir class-dir
                   :src-dirs ["src"]
                   :ns-compile ['com.kroo.typeset.logback.JsonLayout]
-                  :compile-opts {:direct-linking true}
                   :bindings {#'clojure.core/*assert* false
                              #'clojure.core/*warn-on-reflection* true}}))
 
