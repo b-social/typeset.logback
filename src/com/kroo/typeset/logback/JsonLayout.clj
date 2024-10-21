@@ -50,10 +50,10 @@
 
 (defn- reify-jackson-modules [modules]
   (into []
-	(comp
-	 (remove str/blank?)
-	 (map reify-jackson-module))
-	(str/split modules #"[,\s]+")))
+        (comp
+         (remove str/blank?)
+         (map reify-jackson-module))
+        (str/split modules #"[,\s]+")))
 
 (defn- new-object-mapper
   ^ObjectMapper [opts]

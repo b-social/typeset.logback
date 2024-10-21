@@ -84,7 +84,6 @@ com.fasterxml.jackson.datatype.joda.JodaModule  ")
       (is (str/starts-with? (actual "error.stack")
                             "clojure.lang.ExceptionInfo: Some throwable\n\tat com.kroo.typeset.logback.JsonLayout_test")))))
 
-
 (def bad-log-event-exception
   (ex-info "Hello" {:something "went wrong!"}))
 
