@@ -12,10 +12,10 @@ Simple JSON layout component for [Logback][] Classic, with Clojure and [SLF4J][]
 
 ```clojure
 ;; tools.deps
-com.kroo/typeset.logback {:mvn/version "0.6"}
+com.kroo/typeset.logback {:mvn/version "0.7"}
 
 ;; Leiningen
-[com.kroo/typeset.logback "0.6"]
+[com.kroo/typeset.logback "0.7"]
 ```
 
 > **Note**<br>
