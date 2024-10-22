@@ -28,7 +28,9 @@
                   :src-dirs ["src"]
                   :ns-compile ['com.kroo.typeset.logback.JsonLayout]
                   :bindings {#'clojure.core/*assert* false
-                             #'clojure.core/*warn-on-reflection* true}}))
+                             #'clojure.core/*warn-on-reflection* true}})
+  ;; Remove unintentionally transitive compiled classes.
+  (b/delete {:path (str class-dir "/jsonista")}))
 
 (defn jar
   "Build the JAR."
