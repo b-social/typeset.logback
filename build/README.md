@@ -1,11 +1,14 @@
 # Common development actions
 
+> [!TIP]
+> Install all external tools automatically with [`asdf`](https://asdf-vm.com/) or [`mise`](https://mise.jdx.dev/).  All tool versions are listed in the `.tool-versions` file.
+
 ## Lint/format/etc.
 
 ```shell
-clojure -M:lint           # Lint
-clojure -T:cljfmt fix     # Fix formatting
-clojure -T:antq outdated  # List outdated deps
+bb lint      # Lint
+bb fmt       # Fix formatting
+bb outdated  # List outdated deps
 ```
 
 ## Test
@@ -13,20 +16,20 @@ clojure -T:antq outdated  # List outdated deps
 Run tests by executing the following commands.
 
 ```shell
-clj -T:build compile
-clj -X:test
+bb build compile
+bb test
 ```
 
 ## Build
 
-> **Warning**<br>
+> [!WARNING]
 > If you have any local changes that haven't been committed, they will be included in the built jar file.
 
 Build and install the jar with these commands.
 
 ```shell
-clojure -T:build jar
-clojure -T:build install
+bb build jar
+bb build install
 ```
 
 If there was no Git tag pointing to the commit, the jar will have the version: `local`.

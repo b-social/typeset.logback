@@ -33,6 +33,9 @@
              [setIncludeExData [Boolean] void]
              [setJacksonModules [String] void]]))
 
+;; NOTE: since this class is AOT compiled, be careful not to use any anonymous
+;; functions or vars that have gensymed names.
+
 ;; Record providing fast access to JsonLayout options in lieu of fields.
 (defrecord JsonLayoutOpts [append-newline
                            include-logger-ctx

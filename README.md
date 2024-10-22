@@ -18,7 +18,7 @@ com.kroo/typeset.logback {:mvn/version "0.7"}
 [com.kroo/typeset.logback "0.7"]
 ```
 
-> **Note**<br>
+> [!NOTE]
 > While this library is designed for and written in Clojure, it still works in
 > other JVM languages.  To use it, add [Clojars](https://clojars.org/) as a Maven repository.
 

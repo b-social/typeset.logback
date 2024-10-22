@@ -1,4 +1,6 @@
 {:paths ["src" "target/classes"]
+ ;; NOTE: if adding more Clojure libs, make sure to exclude them from the
+ ;; packaged Typeset.logback Jar (see `build/build.clj`).
  :deps {org.clojure/clojure {:mvn/version "1.12.0"}
         ch.qos.logback/logback-classic {:mvn/version "1.5.11"}
         metosin/jsonista {:mvn/version "0.3.11"}}
@@ -18,12 +20,6 @@
           :deps {io.github.clojure/tools.build {:git/tag "v0.10.5", :git/sha "2a21b7a"}
                  slipset/deps-deploy {:mvn/version "0.2.2"}}
           :ns-default build}
-  ;; clj -M:lint
-  :lint {:replace-deps {clj-kondo/clj-kondo {:mvn/version "RELEASE"}}
-         :main-opts    ["-m" "clj-kondo.main" "--parallel" "--lint" "src" "test"]}
-  ;; clj -T:cljfmt fix
-  :cljfmt {:deps {io.github.weavejester/cljfmt {:git/tag "0.13.0", :git/sha "f0230c3"}}
-           :ns-default cljfmt.tool}
   ;; clj -T:antq outdated
   :antq {:deps {com.github.liquidz/antq {:mvn/version "RELEASE"}
                 org.slf4j/slf4j-nop {:mvn/version "RELEASE"}}

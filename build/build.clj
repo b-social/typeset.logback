@@ -29,7 +29,7 @@
                   :ns-compile ['com.kroo.typeset.logback.JsonLayout]
                   :bindings {#'clojure.core/*assert* false
                              #'clojure.core/*warn-on-reflection* true}})
-  ;; Remove unintentionally transitive compiled classes.
+  ;; NOTE: Removes unintentionally transitive compiled classes.
   (b/delete {:path (str class-dir "/jsonista")}))
 
 (defn jar
