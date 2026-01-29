@@ -2,7 +2,8 @@
  ;; NOTE: if adding more Clojure libs, make sure to exclude them from the
  ;; packaged Typeset.logback Jar (see `build/build.clj`).
  :deps {org.clojure/clojure {:mvn/version "1.12.0"}
-        ch.qos.logback/logback-classic {:mvn/version "1.5.11"}
+        ch.qos.logback/logback-core {:mvn/version "1.5.25"}
+        ch.qos.logback/logback-classic {:mvn/version "1.5.25"}
         metosin/jsonista {:mvn/version "0.3.11"}}
  :deps/prep-lib {:alias :build
                  :fn compile
